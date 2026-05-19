@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title><?=Core::$title?>***</title>
+<title><?=Core::$title?></title>
 <link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
 <link href="css/themes/jqm-icon-pack-fa.css" rel="stylesheet" type="text/css" />
 <link href="css/jquery.mobile.custom.structure.min.css" rel="stylesheet" type="text/css">
