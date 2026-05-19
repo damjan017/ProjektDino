@@ -1,0 +1,9 @@
+{
+"Straße":{"type":"string","stereotype":"primitive","label":"Straße"},
+"Hausnummer":{"type":"integer","stereotype":"primitive","label":"Hausnummer"},
+"Postleitzahl":{"type":"integer","stereotype":"primitive","label":"Postleitzahl"},
+"Ortschaft":{"type":"string","stereotype":"primitive","label":"Ortschaft"},
+"Breitengrad":{"type":"float","stereotype":"primitive","label":"Breitengrad"},
+"Laengengrad":{"type":"float","stereotype":"primitive","label":"Laengengrad"},
+"DistanzzurStadt":{"type":"integer","stereotype":"primitive","label":"DistanzzurStadt"}
+}

@@ -1,0 +1,4 @@
+{
+"Bezeichnung":{"type":"string","stereotype":"primitive","label":"Bezeichnung"},
+"Kategorie":{"type":"AusstattungskategorieT","stereotype":"enumeration","classAlias":"AusstattungskategorieT0","label":"Kategorie"}
+}

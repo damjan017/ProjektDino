@@ -1,0 +1,12 @@
+{
+"checkin":{"type":"date","stereotype":"primitive","label":"checkin"},
+"checkout":{"type":"date","stereotype":"primitive","label":"checkout"},
+"AnzahlGaeste":{"type":"integer","stereotype":"primitive","label":"AnzahlGaeste"},
+"Gesamtpreis":{"type":"float","stereotype":"primitive","label":"Gesamtpreis"},
+"Zahlungsart":{"type":"ZahlungsartT","stereotype":"enumeration","classAlias":"ZahlungsartT0","label":"Zahlungsart"},
+"Zahlungsbetrag":{"type":"float","stereotype":"primitive","label":"Zahlungsbetrag"},
+"Status":{"type":"StatusT","stereotype":"enumeration","classAlias":"StatusT1","label":"Status"},
+"_Hotelier":{"type":"foreign","stereotype":"relation","class":"Hotelier","classAlias":"Hotelier","renderAs": {"edit": {"required": "true"},"new": {"required": "true"}}, "join": "INNER"},
+"_Kunde":{"type":"foreign","stereotype":"relation","class":"Kunde","classAlias":"Kunde","renderAs": {"edit": {"required": "true"},"new": {"required": "true"}}, "join": "INNER"},
+"_Zimmertyp":{"type":"foreign","stereotype":"relation","class":"Zimmertyp","classAlias":"Zimmertyp","renderAs": {"edit": {"required": "true"},"new": {"required": "true"}}, "join": "INNER"}
+}

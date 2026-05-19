@@ -1,0 +1,9 @@
+{
+"Unterkunftsart":{"type":"UnterkunftsartT","stereotype":"enumeration","classAlias":"UnterkunftsartT0","label":"Unterkunftsart"},
+"Name":{"type":"string","stereotype":"primitive","label":"Name"},
+"Bild":{"type":"picture","stereotype":"primitive","label":"Bild"},
+"Beschreibung":{"type":"string","stereotype":"primitive","label":"Beschreibung"},
+"Bewertung":{"type":"integer","stereotype":"primitive","label":"Bewertung"},
+"_Adresse":{"type":"foreign","stereotype":"relation","class":"Adresse","classAlias":"Adresse","renderAs": {"edit": {"required": "true"},"new": {"required": "true"}}, "join": "INNER"},
+"_Hotelier":{"type":"foreign","stereotype":"relation","class":"Hotelier","classAlias":"Hotelier","renderAs": {"edit": {"required": "true"},"new": {"required": "true"}}, "join": "INNER"}
+}

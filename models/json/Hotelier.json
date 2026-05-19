@@ -1,0 +1,6 @@
+{
+"Name":{"type":"string","stereotype":"primitive","label":"Name"},
+"Vorname":{"type":"string","stereotype":"primitive","label":"Vorname"},
+"Email":{"type":"string","stereotype":"primitive","label":"Email"},
+"Passwort":{"type":"string","stereotype":"primitive","label":"Passwort"}
+}

@@ -1,0 +1,7 @@
+{
+"Vorname":{"type":"string","stereotype":"primitive","label":"Vorname"},
+"Nachname":{"type":"string","stereotype":"primitive","label":"Nachname"},
+"Geburtsdatum":{"type":"date","stereotype":"primitive","label":"Geburtsdatum"},
+"Personalausweisnr":{"type":"string","stereotype":"primitive","label":"Personalausweisnr."},
+"_Buchung":{"type":"foreign","stereotype":"relation","class":"Buchung","classAlias":"Buchung","renderAs": {"edit": {"required": "true"},"new": {"required": "true"}}, "join": "INNER"}
+}

@@ -1,0 +1,11 @@
+{
+"Bezeichnung":{"type":"ZimmertypT","stereotype":"enumeration","classAlias":"ZimmertypT0","label":"Bezeichnung"},
+"Anzahltbett":{"type":"integer","stereotype":"primitive","label":"Anzahltbett"},
+"ArtBett":{"type":"string","stereotype":"primitive","label":"ArtBett"},
+"Preis":{"type":"float","stereotype":"primitive","label":"Preis"},
+"Aktionspreis":{"type":"float","stereotype":"primitive","label":"Aktionspreis"},
+"Aktionaktiv":{"type":"integer","stereotype":"primitive","label":"Aktionaktiv"},
+"Bild":{"type":"picture","stereotype":"primitive","label":"Bild"},
+"AnzahlVerfuegbarkeit":{"type":"integer","stereotype":"primitive","label":"AnzahlVerfuegbarkeit"},
+"_Unterkunft":{"type":"foreign","stereotype":"relation","class":"Unterkunft","classAlias":"Unterkunft","renderAs": {"edit": {"required": "true"},"new": {"required": "true"}}, "join": "INNER"}
+}
