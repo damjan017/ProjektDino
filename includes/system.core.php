@@ -116,7 +116,7 @@ class Core {
     private static function count_visits() {
         $db = Core::$pdo;
         $month = date('m');
-        $first_letter = $month{0};
+        $first_letter = $month[0];
         if ($first_letter == "0") {
             $month = substr($month, 1);
         }
