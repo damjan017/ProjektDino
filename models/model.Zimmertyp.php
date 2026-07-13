@@ -33,10 +33,21 @@ const SQL_PRIMARY='id';
 
 //Operationen:
 public function berechneVerfuegbarkeit ($return, $von, $bis){
-//Hier ist Platz für die Funktion berechneVerfuegbarkeit
+    // zaehlt aktive Buchungen (Status 3 = storniert wird ausgenommen), die sich mit dem Zeitraum ueberschneiden
+    $sql = "SELECT COUNT(*) as anzahl FROM Buchung
+            WHERE _Zimmertyp = ?
+              AND Status != 3
+              AND NOT (checkout <= ? OR checkin >= ?)";
+    $result = $this->query($sql, [$this->id, $von, $bis], true);
+    $belegt = $result[0]->anzahl;
+    return ($this->AnzahlVerfuegbarkeit - $belegt) > 0;
 }
-public function berechnePreis ($return){
-//Hier ist Platz für die Funktion berechnePreis
+public function berechnePreis ($return, $von, $bis){
+    $checkin  = new DateTime($von);
+    $checkout = new DateTime($bis);
+    $naechte  = $checkin->diff($checkout)->days;
+    $preisProNacht = ($this->Aktionaktiv && $this->Aktionspreis > 0) ? $this->Aktionspreis : $this->Preis;
+    return $naechte * $preisProNacht;
 }
 const SQL_SELECT_Buchung_b='select Zimmertyp.id as id, `ZimmertypT0`.`literal` as `Bezeichnung_literal`, `Zimmertyp`.`Bezeichnung` as `Bezeichnung`, Zimmertyp.Anzahltbett as Anzahltbett, Zimmertyp.ArtBett as ArtBett, Zimmertyp.Preis as Preis, Zimmertyp.Aktionspreis as Aktionspreis, Zimmertyp.Aktionaktiv as Aktionaktiv, Zimmertyp.Bild as Bild, Zimmertyp.AnzahlVerfuegbarkeit as AnzahlVerfuegbarkeit from Zimmertyp left join `ZimmertypT` as ZimmertypT0 on `Zimmertyp`.`Bezeichnung` = `ZimmertypT0`.`id`  where Zimmertyp.id = ?';
 const SQL_SELECT_Unterkunft='select Zimmertyp.id as id, `ZimmertypT0`.`literal` as `Bezeichnung_literal`, `Zimmertyp`.`Bezeichnung` as `Bezeichnung`, Zimmertyp.Anzahltbett as Anzahltbett, Zimmertyp.ArtBett as ArtBett, Zimmertyp.Preis as Preis, Zimmertyp.Aktionspreis as Aktionspreis, Zimmertyp.Aktionaktiv as Aktionaktiv, Zimmertyp.Bild as Bild, Zimmertyp.AnzahlVerfuegbarkeit as AnzahlVerfuegbarkeit from Zimmertyp left join `ZimmertypT` as ZimmertypT0 on `Zimmertyp`.`Bezeichnung` = `ZimmertypT0`.`id`  where Zimmertyp._Unterkunft = ?';
