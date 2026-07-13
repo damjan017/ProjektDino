@@ -249,7 +249,7 @@ class Core {
     /**
      * liest <b>sicher</b> den Task der Seite aus und speichert diesen in <b><i>::$task</i></b>.
      */
-    public function init() {
+    public static function init() {
 
         if (isset($_REQUEST['task'])) {
             self::$task = filter_var($_REQUEST['task'], FILTER_SANITIZE_STRIPPED);
