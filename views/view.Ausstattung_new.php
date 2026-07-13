@@ -13,7 +13,9 @@ $AusstattungskategorieT = Core::import("AusstattungskategorieT");
         <option value="">– bitte wählen –</option>
         <?php if (is_array($AusstattungskategorieT)): ?>
             <?php foreach ($AusstattungskategorieT as $ak): ?>
-            <option value="<?=$ak->id?>"><?=htmlspecialchars($ak->literal)?></option>
+            <option value="<?=(int)$ak->id?>" <?=((int)$Ausstattung->Kategorie === (int)$ak->id ? 'selected' : '')?>>
+                <?=htmlspecialchars($ak->literal)?>
+            </option>
             <?php endforeach; ?>
         <?php endif; ?>
     </select>

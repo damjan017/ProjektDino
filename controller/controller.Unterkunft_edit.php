@@ -1,4 +1,6 @@
 <?php
+require_once 'includes/ausstattung.functions.php';
+
 $taskType = "edit";
 $classSettings = Unterkunft::$settings;
 $access = Core::checkAccessGui($classSettings, $taskType);
@@ -11,10 +13,21 @@ Unterkunft::$activeViewport = "edit";
 Unterkunft::renderScript("edit", "form_Unterkunft");
 $Unterkunft->loadDBData($id);
 
+$Ausstattung_list = Ausstattung::findAll();
+$selectedAusstattungIds = assignedAusstattungIds($id);
+
 if (count($_POST) > 0 && $_GET["task"] != "favoriten") {
+    $selectedAusstattungIds = existingAusstattungIds(postedAusstattungIds(), $Ausstattung_list);
     $a = $Unterkunft->loadFormData();
     if ($a === true) {
-        if ($Unterkunft->update() != "0") {
+        try {
+            Core::$pdo->beginTransaction();
+            if (!$Unterkunft->update()) {
+                throw new RuntimeException('Unterkunft konnte nicht aktualisiert werden');
+            }
+            saveUnterkunftAusstattung($id, $selectedAusstattungIds);
+            Core::$pdo->commit();
+
             foreach ($_FILES as $filekey => $file) {
                 if ($file["name"] != "") {
                     $Unterkunft_field = Unterkunft::$dataScheme[$filekey];
@@ -23,12 +36,16 @@ if (count($_POST) > 0 && $_GET["task"] != "favoriten") {
                     }
                 }
             }
-            Core::redirect("Unterkunft_detail&id=$id");
-        } else {
-            Core::addError("Der Datenbankeintrag war nicht erfolgreich");
+            Core::redirect("Unterkunft_detail&id=$id", ["message" => "Unterkunft und Ausstattung erfolgreich aktualisiert"]);
+        } catch (Throwable $error) {
+            if (Core::$pdo->inTransaction()) {
+                Core::$pdo->rollBack();
+            }
+            Core::addError("Unterkunft und Ausstattung konnten nicht vollständig gespeichert werden");
+            Core::debug($error->getMessage());
         }
     } else {
-        Core::addError("Die Eingegebenen Daten waren nicht korrekt");
+        Core::addError("Die eingegebenen Daten waren nicht korrekt");
     }
 }
 
@@ -38,4 +55,6 @@ $_Hotelier = Hotelier::findAll();
 Core::publish($_Hotelier, "_Hotelier");
 $UnterkunftsartT = UnterkunftsartT::findAll();
 Core::publish($UnterkunftsartT, "UnterkunftsartT");
+Core::publish($Ausstattung_list, "Ausstattung_list");
+Core::publish($selectedAusstattungIds, "selectedAusstattungIds");
 Core::publish($Unterkunft, "Unterkunft");

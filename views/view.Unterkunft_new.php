@@ -3,6 +3,8 @@ $Unterkunft    = Core::$view->Unterkunft;
 $_Adresse      = Core::import("_Adresse");
 $_Hotelier     = Core::import("_Hotelier");
 $UnterkunftsartT = Core::import("UnterkunftsartT");
+$Ausstattung_list = Core::import("Ausstattung_list");
+$selectedAusstattungIds = Core::import("selectedAusstattungIds");
 ?>
 <a href="?task=Unterkunft" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"
    style="display:inline-block;" data-ajax="false">Zurück</a>
@@ -47,6 +49,8 @@ $UnterkunftsartT = Core::import("UnterkunftsartT");
             <?php endforeach; ?>
         <?php endif; ?>
     </select>
+
+    <?php require 'views/view.Unterkunft_Ausstattung_fields.php'; ?>
 </div>
 <button type="submit" name="update" value="1"
         class="ui-btn ui-btn-b ui-icon-check ui-btn-icon-left">Speichern</button>
