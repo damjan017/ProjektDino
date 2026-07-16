@@ -4,6 +4,15 @@ $Adresse         = Core::$view->Adresse;
 $Zimmertyp_b_list = Core::import("Zimmertyp_b_list");
 $Ausstattung_a_list = Core::import("Ausstattung_a_list");
 $access          = Core::import("access");
+$darfVerwalten   = Core::import("darfVerwalten");
+
+$groupedAusstattung = [];
+if (is_array($Ausstattung_a_list)) {
+    foreach ($Ausstattung_a_list as $ausstattungItem) {
+        $category = $ausstattungItem->Kategorie_literal ?: 'Ohne Kategorie';
+        $groupedAusstattung[$category][] = $ausstattungItem;
+    }
+}
 ?>
 <a href="?task=Unterkunft" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"
    style="display:inline-block;" data-ajax="false">Zurück</a>
@@ -24,27 +33,41 @@ $access          = Core::import("access");
     <p><?=nl2br(htmlspecialchars($Unterkunft->Beschreibung))?></p>
     <?php if ($Adresse): ?>
     <p><strong>Adresse:</strong>
-        <?=htmlspecialchars($Adresse->Straße)?> <?=htmlspecialchars($Adresse->Hausnummer)?>,
-        <?=htmlspecialchars($Adresse->Postleitzahl)?> <?=htmlspecialchars($Adresse->Ortschaft)?>
-        <?php if ($Adresse->DistanzzurStadt): ?>
-        (<?=(int)$Adresse->DistanzzurStadt?> km zum Zentrum)
+        <?=htmlspecialchars($Adresse->formatiert(null))?>
+        <?php if ($Adresse->DistanzzurStadt !== null && $Adresse->DistanzzurStadt !== ""): ?>
+        (<?=(int) $Adresse->DistanzzurStadt?> km zum Zentrum)
         <?php endif; ?>
+    </p>
+    <p><strong>Breitengrad:</strong>
+        <?=$Adresse->Breitengrad !== null && $Adresse->Breitengrad !== ""
+            ? htmlspecialchars((string) $Adresse->Breitengrad)
+            : "Keine Angabe"?>
+    </p>
+    <p><strong>Längengrad:</strong>
+        <?=$Adresse->Laengengrad !== null && $Adresse->Laengengrad !== ""
+            ? htmlspecialchars((string) $Adresse->Laengengrad)
+            : "Keine Angabe"?>
     </p>
     <?php endif; ?>
 </div>
 
-<?php if (!empty($Ausstattung_a_list)): ?>
 <div class="ui-body ui-body-a" style="padding:10px; border-radius:6px; margin-bottom:10px;">
     <h3>Ausstattung</h3>
-    <ul style="list-style:none; padding:0; display:flex; flex-wrap:wrap; gap:8px;">
-        <?php foreach ($Ausstattung_a_list as $a): ?>
-        <li style="background:#e8f5e9; border-radius:20px; padding:4px 12px; font-size:0.9em;">
-            ✓ <?=htmlspecialchars($a->Bezeichnung)?>
-        </li>
+    <?php if (count($groupedAusstattung) === 0): ?>
+        <p>Für diese Unterkunft wurden noch keine Ausstattungsmerkmale hinterlegt.</p>
+    <?php else: ?>
+        <?php foreach ($groupedAusstattung as $category => $items): ?>
+            <h4><?=htmlspecialchars($category)?></h4>
+            <ul style="list-style:none; padding:0; display:flex; flex-wrap:wrap; gap:8px;">
+                <?php foreach ($items as $item): ?>
+                <li style="background:#e8f5e9; border-radius:20px; padding:4px 12px; font-size:0.9em;">
+                    ✓ <?=htmlspecialchars($item->Bezeichnung)?>
+                </li>
+                <?php endforeach; ?>
+            </ul>
         <?php endforeach; ?>
-    </ul>
+    <?php endif; ?>
 </div>
-<?php endif; ?>
 
 <h3>Verfügbare Zimmer</h3>
 <?php if (!empty($Zimmertyp_b_list)): ?>
@@ -79,11 +102,11 @@ $access          = Core::import("access");
     <p>Keine Zimmer für diese Unterkunft angelegt.</p>
 <?php endif; ?>
 
-<?php if ($access["edit"] == "true"): ?>
+<?php if ($darfVerwalten && $access["edit"] == "true"): ?>
 <a href="?task=Unterkunft_edit&id=<?=$Unterkunft->id?>"
    class="ui-btn ui-icon-pencil ui-btn-icon-left" data-ajax="false">Bearbeiten</a>
 <?php endif; ?>
-<?php if ($access["delete"] == "true"): ?>
+<?php if ($darfVerwalten && $access["delete"] == "true"): ?>
 <a href="?task=Unterkunft_delete&id=<?=$Unterkunft->id?>"
    class="ui-btn ui-icon-delete ui-btn-icon-left" data-ajax="false"
    onclick="return confirm('Unterkunft wirklich löschen?')">Löschen</a>

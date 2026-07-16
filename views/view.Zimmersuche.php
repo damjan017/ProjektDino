@@ -15,6 +15,7 @@ $checkout        = Core::import("checkout");
         <label for="suchbegriff">Ort oder Hotelname:</label>
         <input type="text" id="suchbegriff" name="suchbegriff"
                value="<?=htmlspecialchars($suchbegriff)?>"
+               maxlength="100"
                placeholder="z.B. München, Strandhotel..." />
 
         <label for="checkin">Check-in:</label>
@@ -27,7 +28,7 @@ $checkout        = Core::import("checkout");
 
         <label for="anzahl_gaeste">Anzahl Gäste:</label>
         <input type="number" id="anzahl_gaeste" name="anzahl_gaeste"
-               value="<?=(int)$anzahl_gaeste?>" min="1" max="20" required />
+               value="<?=htmlspecialchars((string) $anzahl_gaeste)?>" min="1" max="20" required />
     </div>
 
     <button type="submit" name="suchen" value="1"

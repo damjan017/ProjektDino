@@ -1,4 +1,11 @@
 <?php
+$istHotelier = isset(Core::$user->Gruppe_literal)
+    && strcasecmp((string) Core::$user->Gruppe_literal, "Hotelier") === 0;
+if (!$istHotelier) {
+    Core::redirect("error", ["errorMsg" => "Nur Hotelier dürfen Zimmertypen verwalten"]);
+    return;
+}
+
 $taskType = "edit";
 $classSettings = Zimmertyp::$settings;
 $access = Core::checkAccessGui($classSettings, $taskType);

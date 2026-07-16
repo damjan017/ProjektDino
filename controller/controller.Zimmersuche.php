@@ -10,13 +10,65 @@ $checkin  = date("Y-m-d");
 $checkout = date("Y-m-d", strtotime("+1 day"));
 
 if (count($_POST) > 0 && isset($_POST["suchen"])) {
-    $suchbegriff   = filter_input(INPUT_POST, "suchbegriff", FILTER_SANITIZE_STRING);
-    $anzahl_gaeste = filter_input(INPUT_POST, "anzahl_gaeste", FILTER_SANITIZE_NUMBER_INT);
-    $checkin       = filter_input(INPUT_POST, "checkin");
-    $checkout      = filter_input(INPUT_POST, "checkout");
+    $suchbegriff = trim((string) ($_POST["suchbegriff"] ?? ""));
+    $anzahl_gaeste = (string) ($_POST["anzahl_gaeste"] ?? "");
+    $checkin = trim((string) ($_POST["checkin"] ?? ""));
+    $checkout = trim((string) ($_POST["checkout"] ?? ""));
+    $eingabenKorrekt = true;
 
-    // SQL: Zimmertypen suchen, die zur Gästeanzahl passen und zur gesuchten Unterkunft/Stadt gehören
-    $sql = "SELECT z.id as id,
+    $laengeSuchbegriff = function_exists("mb_strlen")
+        ? mb_strlen($suchbegriff)
+        : strlen($suchbegriff);
+    if ($laengeSuchbegriff > 100) {
+        Core::addError("Der Suchbegriff darf höchstens 100 Zeichen lang sein");
+        $eingabenKorrekt = false;
+    }
+
+    $gaesteValidiert = filter_var(
+        $anzahl_gaeste,
+        FILTER_VALIDATE_INT,
+        ["options" => ["min_range" => 1, "max_range" => 20]]
+    );
+    if ($gaesteValidiert === false) {
+        Core::addError("Die Gästezahl muss zwischen 1 und 20 liegen");
+        $eingabenKorrekt = false;
+    }
+
+    $datumPruefen = function ($wert) {
+        $datum = DateTime::createFromFormat("!Y-m-d", $wert);
+        $fehler = DateTime::getLastErrors();
+        if (!$datum) {
+            return false;
+        }
+        if ($fehler !== false && ($fehler["warning_count"] > 0 || $fehler["error_count"] > 0)) {
+            return false;
+        }
+        if ($datum->format("Y-m-d") !== $wert) {
+            return false;
+        }
+        return $datum;
+    };
+
+    $checkinDatum = $datumPruefen($checkin);
+    $checkoutDatum = $datumPruefen($checkout);
+    if ($checkinDatum === false || $checkoutDatum === false) {
+        Core::addError("Bitte gültige An- und Abreisedaten angeben");
+        $eingabenKorrekt = false;
+    } else {
+        $heute = new DateTime("today");
+        if ($checkinDatum < $heute) {
+            Core::addError("Das Anreisedatum darf nicht in der Vergangenheit liegen");
+            $eingabenKorrekt = false;
+        }
+        if ($checkoutDatum <= $checkinDatum) {
+            Core::addError("Das Abreisedatum muss mindestens einen Tag nach dem Anreisedatum liegen");
+            $eingabenKorrekt = false;
+        }
+    }
+
+    if ($eingabenKorrekt) {
+        // Nur verfügbare Zimmertypen mit ausreichender Bettenzahl suchen.
+        $sql = "SELECT z.id as id,
                    zt.literal as Bezeichnung_literal,
                    z.Bezeichnung as Bezeichnung,
                    z.Anzahltbett as Anzahltbett,
@@ -46,9 +98,13 @@ if (count($_POST) > 0 && isset($_POST["suchen"])) {
               )
             ORDER BY u.Bewertung DESC";
 
-    $suche = "%$suchbegriff%";
-    $Zimmertyp = new Zimmertyp();
-    $Zimmertyp_list = $Zimmertyp->query($sql, [$anzahl_gaeste, $suche, $suche, $checkin, $checkout]);
+        $suche = "%$suchbegriff%";
+        $Zimmertyp = new Zimmertyp();
+        $Zimmertyp_list = $Zimmertyp->query(
+            $sql,
+            [(int) $gaesteValidiert, $suche, $suche, $checkin, $checkout]
+        );
+    }
 }
 
 Core::publish($Zimmertyp_list, "Zimmertyp_list");

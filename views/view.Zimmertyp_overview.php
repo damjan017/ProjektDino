@@ -1,46 +1,57 @@
 <?php
 $Zimmertyp_list = Core::$view->Zimmertyp_list;
-$Zimmertyp      = Core::$view->Zimmertyp;
-$access         = Core::import("access");
+$access = Core::import("access");
 ?>
 <div data-role="ui-bar ui-bar-a">
-    <h1>Übersicht: Zimmertypen</h1>
+    <h1>Meine Zimmertypen</h1>
 </div>
-<form><input id="filterTable-input" data-type="search" placeholder="Suchen..."></form>
+
+<form>
+    <input id="filterTable-input" data-type="search" placeholder="Eigene Zimmertypen durchsuchen...">
+</form>
+
 <div class="overflowx">
 <table data-role="table" id="tbl_Zimmertyp" data-filter="true" data-input="#filterTable-input"
-       class="ui-responsive" data-mode="columntoggle" data-column-btn-theme="b" data-column-btn-text="Spalten">
+       class="ui-responsive" data-mode="columntoggle"
+       data-column-btn-theme="b" data-column-btn-text="Spalten">
 <thead>
 <tr>
-    <?php $Zimmertyp->renderHeader("id", "table"); ?>
-    <?php $Zimmertyp->renderHeader("Bezeichnung", "table"); ?>
-    <?php $Zimmertyp->renderHeader("Anzahltbett", "table"); ?>
-    <?php $Zimmertyp->renderHeader("Preis", "table"); ?>
-    <?php $Zimmertyp->renderHeader("AnzahlVerfuegbarkeit", "table"); ?>
-    <?php $Zimmertyp->renderHeader("_Unterkunft", "table"); ?>
-    <th></th>
+    <th>Bezeichnung</th>
+    <th>Unterkunft</th>
+    <th>Betten</th>
+    <th>Bettart</th>
+    <th>Preis pro Nacht</th>
+    <th>Verfügbare Zimmer</th>
+    <th>Aktionen</th>
 </tr>
 </thead>
 <tbody>
-<?php foreach ($Zimmertyp_list as $klasse): ?>
+<?php foreach ($Zimmertyp_list as $zimmertyp): ?>
 <tr>
-    <?php $klasse->render("id"); ?>
-    <?php $klasse->render("Bezeichnung"); ?>
-    <?php $klasse->render("Anzahltbett"); ?>
-    <?php $klasse->render("Preis"); ?>
-    <?php $klasse->render("AnzahlVerfuegbarkeit"); ?>
-    <?php $klasse->render("_Unterkunft"); ?>
+    <td><?=htmlspecialchars((string) $zimmertyp->Bezeichnung_literal)?></td>
+    <td><?=htmlspecialchars((string) $zimmertyp->Unterkunft_Name)?></td>
+    <td><?=(int) $zimmertyp->Anzahltbett?></td>
+    <td><?=htmlspecialchars((string) $zimmertyp->ArtBett)?></td>
+    <td>
+        <?php if ($zimmertyp->Aktionaktiv && (float) $zimmertyp->Aktionspreis > 0): ?>
+            <s><?=number_format((float) $zimmertyp->Preis, 2, ',', '.')?> €</s><br>
+            <strong><?=number_format((float) $zimmertyp->Aktionspreis, 2, ',', '.')?> € (Aktion)</strong>
+        <?php else: ?>
+            <?=number_format((float) $zimmertyp->Preis, 2, ',', '.')?> €
+        <?php endif; ?>
+    </td>
+    <td><?=(int) $zimmertyp->AnzahlVerfuegbarkeit?></td>
     <td>
         <?php if ($access["detail"] == "true"): ?>
-        <a href="?task=Zimmertyp_detail&id=<?=$klasse->id?>" data-ajax="false"
-           class="ui-btn ui-icon-eye ui-btn-icon-notext ui-corner-all ui-btn-inline">Detail</a>
+        <a href="?task=Zimmertyp_detail&amp;id=<?=(int) $zimmertyp->id?>" data-ajax="false"
+           class="ui-btn ui-icon-eye ui-btn-icon-notext ui-corner-all ui-btn-inline">Details</a>
         <?php endif; ?>
         <?php if ($access["edit"] == "true"): ?>
-        <a href="?task=Zimmertyp_edit&id=<?=$klasse->id?>" data-ajax="false"
-           class="ui-btn ui-icon-pencil ui-btn-icon-notext ui-corner-all ui-btn-inline">Edit</a>
+        <a href="?task=Zimmertyp_edit&amp;id=<?=(int) $zimmertyp->id?>" data-ajax="false"
+           class="ui-btn ui-icon-pencil ui-btn-icon-notext ui-corner-all ui-btn-inline">Bearbeiten</a>
         <?php endif; ?>
         <?php if ($access["delete"] == "true"): ?>
-        <a href="?task=Zimmertyp_delete&id=<?=$klasse->id?>" data-ajax="false"
+        <a href="?task=Zimmertyp_delete&amp;id=<?=(int) $zimmertyp->id?>" data-ajax="false"
            class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all ui-btn-inline"
            onclick="return confirm('Zimmertyp wirklich löschen?')">Löschen</a>
         <?php endif; ?>
@@ -50,6 +61,11 @@ $access         = Core::import("access");
 </tbody>
 </table>
 </div>
+
+<?php if (count($Zimmertyp_list) === 0): ?>
+<p>Für Ihre Unterkünfte wurden noch keine Zimmertypen angelegt.</p>
+<?php endif; ?>
+
 <?php if ($access["new"] == "true"): ?>
 <a href="?task=Zimmertyp_new" class="ui-btn ui-btn-b ui-icon-plus ui-btn-icon-left" data-ajax="false">
     Neuen Zimmertyp anlegen
