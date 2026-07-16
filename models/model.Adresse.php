@@ -30,7 +30,16 @@ const SQL_PRIMARY='id';
 
 //Operationen:
 public function formatiert ($return){
-//Hier ist Platz für die Funktion formatiert
+    $strasse = trim((string) $this->Straße . " " . (string) $this->Hausnummer);
+    $ort = trim((string) $this->Postleitzahl . " " . (string) $this->Ortschaft);
+
+    if ($strasse != "" && $ort != "") {
+        return $strasse . ", " . $ort;
+    }
+    if ($strasse != "") {
+        return $strasse;
+    }
+    return $ort;
 }
 const SQL_SELECT_Unterkunft_b='select Adresse.id as id, Adresse.Straße as Straße, Adresse.Hausnummer as Hausnummer, Adresse.Postleitzahl as Postleitzahl, Adresse.Ortschaft as Ortschaft, Adresse.Breitengrad as Breitengrad, Adresse.Laengengrad as Laengengrad, Adresse.DistanzzurStadt as DistanzzurStadt from Adresse where Adresse.id = ?';
 }

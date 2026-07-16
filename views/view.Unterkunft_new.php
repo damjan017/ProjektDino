@@ -1,7 +1,6 @@
 <?php
-$Unterkunft    = Core::$view->Unterkunft;
-$_Adresse      = Core::import("_Adresse");
-$_Hotelier     = Core::import("_Hotelier");
+$Unterkunft = Core::$view->Unterkunft;
+$Adresse = Core::import("Adresse");
 $UnterkunftsartT = Core::import("UnterkunftsartT");
 ?>
 <a href="?task=Unterkunft" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"
@@ -11,42 +10,47 @@ $UnterkunftsartT = Core::import("UnterkunftsartT");
 <form id="form_Unterkunft" method="post" action="?task=Unterkunft_new"
       data-ajax="false" enctype="<?=$Unterkunft::$enctype?>">
 <div class="ui-field-contain">
+    <h3>Unterkunft</h3>
     <?php $Unterkunft->renderLabel("Name"); $Unterkunft->render("Name"); ?>
     <?php $Unterkunft->renderLabel("Beschreibung"); $Unterkunft->render("Beschreibung"); ?>
     <?php $Unterkunft->renderLabel("Bewertung"); $Unterkunft->render("Bewertung"); ?>
     <?php $Unterkunft->renderLabel("Bild"); $Unterkunft->render("Bild"); ?>
-
-    <label for="_Hotelier">Hotelier:</label>
-    <select name="_Hotelier" id="_Hotelier" required>
-        <option value="">– bitte wählen –</option>
-        <?php if (is_array($_Hotelier)): ?>
-            <?php foreach ($_Hotelier as $h): ?>
-            <option value="<?=$h->id?>"><?=htmlspecialchars($h->Vorname . ' ' . $h->Name)?></option>
-            <?php endforeach; ?>
-        <?php endif; ?>
-    </select>
-
-    <label for="_Adresse">Adresse:</label>
-    <select name="_Adresse" id="_Adresse" required>
-        <option value="">– bitte wählen –</option>
-        <?php if (is_array($_Adresse)): ?>
-            <?php foreach ($_Adresse as $a): ?>
-            <option value="<?=$a->id?>">
-                <?=htmlspecialchars($a->Straße . ' ' . $a->Hausnummer . ', ' . $a->Postleitzahl . ' ' . $a->Ortschaft)?>
-            </option>
-            <?php endforeach; ?>
-        <?php endif; ?>
-    </select>
 
     <label for="Unterkunftsart">Unterkunftsart:</label>
     <select name="Unterkunftsart" id="Unterkunftsart" required>
         <option value="">– bitte wählen –</option>
         <?php if (is_array($UnterkunftsartT)): ?>
             <?php foreach ($UnterkunftsartT as $ua): ?>
-            <option value="<?=$ua->id?>"><?=htmlspecialchars($ua->literal)?></option>
+            <option value="<?=$ua->id?>" <?=((int) $Unterkunft->Unterkunftsart === (int) $ua->id ? 'selected' : '')?>>
+                <?=htmlspecialchars($ua->literal)?>
+            </option>
             <?php endforeach; ?>
         <?php endif; ?>
     </select>
+
+    <p>Die Unterkunft wird automatisch dem angemeldeten Hotelier zugeordnet.</p>
+
+    <h3>Adresse und Lage</h3>
+    <label for="Strasse">Straße:</label>
+    <input type="text" name="Strasse" id="Strasse" value="<?=htmlspecialchars((string) $Adresse->Straße)?>" required />
+
+    <label for="Hausnummer">Hausnummer:</label>
+    <input type="number" name="Hausnummer" id="Hausnummer" value="<?=htmlspecialchars((string) $Adresse->Hausnummer)?>" min="1" required />
+
+    <label for="Postleitzahl">Postleitzahl:</label>
+    <input type="number" name="Postleitzahl" id="Postleitzahl" value="<?=htmlspecialchars((string) $Adresse->Postleitzahl)?>" min="1" required />
+
+    <label for="Ortschaft">Ortschaft:</label>
+    <input type="text" name="Ortschaft" id="Ortschaft" value="<?=htmlspecialchars((string) $Adresse->Ortschaft)?>" required />
+
+    <label for="Breitengrad">Breitengrad:</label>
+    <input type="number" name="Breitengrad" id="Breitengrad" value="<?=htmlspecialchars((string) $Adresse->Breitengrad)?>" step="any" />
+
+    <label for="Laengengrad">Längengrad:</label>
+    <input type="number" name="Laengengrad" id="Laengengrad" value="<?=htmlspecialchars((string) $Adresse->Laengengrad)?>" step="any" />
+
+    <label for="DistanzzurStadt">Distanz zum Stadtzentrum in km:</label>
+    <input type="number" name="DistanzzurStadt" id="DistanzzurStadt" value="<?=htmlspecialchars((string) $Adresse->DistanzzurStadt)?>" min="0" />
 </div>
 <button type="submit" name="update" value="1"
         class="ui-btn ui-btn-b ui-icon-check ui-btn-icon-left">Speichern</button>

@@ -5,13 +5,46 @@ $access = Core::checkAccessGui($classSettings, $taskType);
 Core::$title = "Neu: Zimmertyp";
 Core::setView("Zimmertyp_new", "view1", "new");
 Core::setViewScheme("view1", "new", "Zimmertyp");
+
 $Zimmertyp = new Zimmertyp();
+$hotelierId = (int) Core::$user->roleid;
+$eigeneUnterkuenfte = [];
+
 Zimmertyp::$activeViewport = "new";
 Zimmertyp::renderScript("new", "form_Zimmertyp");
 
+if ($hotelierId > 0) {
+    $eigeneUnterkuenfte = Unterkunft::query(
+        "SELECT id, Name FROM Unterkunft WHERE _Hotelier = ? ORDER BY Name",
+        [$hotelierId],
+        true
+    );
+} else {
+    Core::addError("Dem angemeldeten Benutzer ist kein Hotelier-Profil zugeordnet");
+}
+
 if (count($_POST) > 0) {
-    $a = $Zimmertyp->loadFormData();
-    if ($a === true) {
+    $formulardatenKorrekt = $Zimmertyp->loadFormData();
+    $ausgewaehlteUnterkunftIstEigen = false;
+
+    foreach ($eigeneUnterkuenfte as $Unterkunft) {
+        if ((int) $Unterkunft->id === (int) $Zimmertyp->_Unterkunft) {
+            $ausgewaehlteUnterkunftIstEigen = true;
+        }
+    }
+
+    if (!$ausgewaehlteUnterkunftIstEigen) {
+        Core::addError("Bitte eine eigene Unterkunft auswählen");
+        $formulardatenKorrekt = false;
+    }
+
+    if ((int) $Zimmertyp->Aktionaktiv > 0
+        && ((float) $Zimmertyp->Aktionspreis <= 0 || (float) $Zimmertyp->Aktionspreis >= (float) $Zimmertyp->Preis)) {
+        Core::addError("Der Aktionspreis muss größer als 0 und kleiner als der reguläre Preis sein");
+        $formulardatenKorrekt = false;
+    }
+
+    if ($formulardatenKorrekt === true) {
         if ($Zimmertyp->create() != "0") {
             foreach ($_FILES as $filekey => $file) {
                 if ($file["name"] != "") {
@@ -22,18 +55,13 @@ if (count($_POST) > 0) {
                 }
             }
             Core::redirect("Zimmertyp_detail&id=" . $Zimmertyp->id, ["message" => "Zimmertyp erfolgreich angelegt"]);
-        } else {
-            Core::addError("Der Datenbankeintrag war nicht erfolgreich");
+            return;
         }
-    } else {
-        Core::addError("Die Eingegebenen Daten waren nicht korrekt");
+        Core::addError("Der Datenbankeintrag war nicht erfolgreich");
     }
 }
 
-// Fremdschlüssel
-$_Unterkunft = Unterkunft::findAll();
-Core::publish($_Unterkunft, "_Unterkunft");
-// Enumerationen
 $ZimmertypT = ZimmertypT::findAll();
+Core::publish($eigeneUnterkuenfte, "_Unterkunft");
 Core::publish($ZimmertypT, "ZimmertypT");
 Core::publish($Zimmertyp, "Zimmertyp");
