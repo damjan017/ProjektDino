@@ -23,7 +23,7 @@ $ZimmertypT  = Core::import("ZimmertypT");
     </select>
 
     <label for="_Unterkunft">Unterkunft:</label>
-    <select name="_Unterkunft" id="_Unterkunft">
+    <select name="_Unterkunft" id="_Unterkunft" required>
         <?php if (is_array($_Unterkunft)): ?>
             <?php foreach ($_Unterkunft as $u): ?>
             <option value="<?=$u->id?>" <?=($Zimmertyp->_Unterkunft == $u->id ? 'selected' : '')?>>

@@ -4,6 +4,9 @@ $suchbegriff    = Core::import("suchbegriff");
 $anzahl_gaeste  = Core::import("anzahl_gaeste");
 $checkin        = Core::import("checkin");
 $checkout       = Core::import("checkout");
+$Ausstattung_list = Core::import("Ausstattung_list");
+$selectedAusstattungIds = Core::import("selectedAusstattungIds");
+$selectedAusstattungLabels = Core::import("selectedAusstattungLabels");
 ?>
 
 <div data-role="ui-bar ui-bar-a">
@@ -24,6 +27,7 @@ $checkout       = Core::import("checkout");
                id="suchbegriff"
                name="suchbegriff"
                value="<?=htmlspecialchars($suchbegriff)?>"
+               maxlength="100"
                placeholder="z.B. München, Strandhotel..." />
 
         <label for="checkin">
@@ -53,10 +57,15 @@ $checkout       = Core::import("checkout");
         <input type="number"
                id="anzahl_gaeste"
                name="anzahl_gaeste"
-               value="<?=(int)$anzahl_gaeste?>"
+               value="<?=htmlspecialchars((string) $anzahl_gaeste)?>"
                min="1"
                max="20"
                required />
+
+        <div data-role="collapsible" data-collapsed="<?=count($selectedAusstattungIds) > 0 ? 'false' : 'true'?>">
+            <h3>Ausstattung filtern<?=count($selectedAusstattungIds) > 0 ? ' (' . count($selectedAusstattungIds) . ')' : ''?></h3>
+            <?php require 'views/view.Ausstattung_filter_fields.php'; ?>
+        </div>
 
     </div>
 
@@ -219,6 +228,13 @@ $checkout       = Core::import("checkout");
 
                         </p>
 
+                    <?php endif; ?>
+
+                    <?php if (count($selectedAusstattungLabels) > 0): ?>
+                        <p style="margin:6px 0; color:#285943;">
+                            <strong>Gewählte Ausstattung:</strong>
+                            <?=htmlspecialchars(implode(', ', $selectedAusstattungLabels))?>
+                        </p>
                     <?php endif; ?>
 
                 </div>

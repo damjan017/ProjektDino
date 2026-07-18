@@ -3,7 +3,8 @@ $Unterkunft        = Core::$view->Unterkunft;
 $Adresse            = Core::$view->Adresse;
 $Zimmertyp_b_list   = Core::import("Zimmertyp_b_list");
 $Ausstattung_a_list = Core::import("Ausstattung_a_list");
-$access             = Core::import("access");
+$access          = Core::import("access");
+$darfVerwalten   = Core::import("darfVerwalten");
 
 /*
  * Ausstattungen nach Kategorien gruppieren.
@@ -153,6 +154,20 @@ if (!empty($Zimmertyp_b_list)) {
             <?php endif; ?>
         </p>
 
+        <p>
+            <strong>Breitengrad:</strong>
+            <?=$Adresse->Breitengrad !== null && $Adresse->Breitengrad !== ""
+                ? htmlspecialchars((string) $Adresse->Breitengrad)
+                : "Keine Angabe"?>
+        </p>
+
+        <p>
+            <strong>Längengrad:</strong>
+            <?=$Adresse->Laengengrad !== null && $Adresse->Laengengrad !== ""
+                ? htmlspecialchars((string) $Adresse->Laengengrad)
+                : "Keine Angabe"?>
+        </p>
+
     <?php endif; ?>
 
 </div>
@@ -295,7 +310,7 @@ if (!empty($Zimmertyp_b_list)) {
 <?php endif; ?>
 
 <!-- Bearbeiten und Löschen -->
-<?php if ($access["edit"] == "true"): ?>
+<?php if ($darfVerwalten && $access["edit"] == "true"): ?>
 
     <a href="?task=Unterkunft_edit&id=<?=$Unterkunft->id?>"
        class="ui-btn ui-icon-pencil ui-btn-icon-left"
@@ -305,7 +320,7 @@ if (!empty($Zimmertyp_b_list)) {
 
 <?php endif; ?>
 
-<?php if ($access["delete"] == "true"): ?>
+<?php if ($darfVerwalten && $access["delete"] == "true"): ?>
 
     <a href="?task=Unterkunft_delete&id=<?=$Unterkunft->id?>"
        class="ui-btn ui-icon-delete ui-btn-icon-left"

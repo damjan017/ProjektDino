@@ -29,6 +29,9 @@ $ZimmertypT  = Core::import("ZimmertypT");
             <?php endforeach; ?>
         <?php endif; ?>
     </select>
+    <?php if (empty($_Unterkunft)): ?>
+        <p>Für den angemeldeten Hotelier wurde noch keine Unterkunft angelegt.</p>
+    <?php endif; ?>
 
     <?php $Zimmertyp->renderLabel("Anzahltbett"); $Zimmertyp->render("Anzahltbett"); ?>
     <?php $Zimmertyp->renderLabel("ArtBett"); $Zimmertyp->render("ArtBett"); ?>

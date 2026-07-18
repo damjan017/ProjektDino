@@ -1,31 +1,93 @@
 <?php
 require_once 'includes/ausstattung.functions.php';
 
+$istHotelier = isset(Core::$user->Gruppe_literal)
+    && strcasecmp((string) Core::$user->Gruppe_literal, "Hotelier") === 0;
+if (!$istHotelier) {
+    Core::redirect("error", ["errorMsg" => "Nur Hotelier dürfen Unterkünfte verwalten"]);
+    return;
+}
+
 $taskType = "edit";
 $classSettings = Unterkunft::$settings;
 $access = Core::checkAccessGui($classSettings, $taskType);
 Core::$title = "Edit: Unterkunft";
-$id = $_GET["id"];
+$id = filter_input(INPUT_GET, "id", FILTER_SANITIZE_NUMBER_INT);
 Core::setView("Unterkunft_edit", "view1", "edit");
 Core::setViewScheme("view1", "edit", "Unterkunft");
+
 $Unterkunft = new Unterkunft();
+$Adresse = new Adresse();
+$hotelierId = (int) Core::$user->roleid;
+
 Unterkunft::$activeViewport = "edit";
 Unterkunft::renderScript("edit", "form_Unterkunft");
-$Unterkunft->loadDBData($id);
+
+if (!$Unterkunft->loadDBData($id)) {
+    Core::redirect("Unterkunft", ["errorMsg" => "Unterkunft wurde nicht gefunden"]);
+    return;
+}
+
+if ($hotelierId <= 0 || (int) $Unterkunft->_Hotelier !== $hotelierId) {
+    Core::redirect("Unterkunft", ["errorMsg" => "Diese Unterkunft gehört nicht zum angemeldeten Hotelier"]);
+    return;
+}
+
+if (!$Adresse->loadDBData($Unterkunft->_Adresse)) {
+    Core::redirect("Unterkunft", ["errorMsg" => "Die Adresse der Unterkunft wurde nicht gefunden"]);
+    return;
+}
 
 $Ausstattung_list = Ausstattung::findAll();
 $selectedAusstattungIds = assignedAusstattungIds($id);
 
 if (count($_POST) > 0 && $_GET["task"] != "favoriten") {
     $selectedAusstattungIds = existingAusstattungIds(postedAusstattungIds(), $Ausstattung_list);
-    $a = $Unterkunft->loadFormData();
-    if ($a === true) {
+
+    $Unterkunft->Name = trim((string) filter_input(INPUT_POST, "Name"));
+    $Unterkunft->Beschreibung = trim((string) filter_input(INPUT_POST, "Beschreibung"));
+    $bewertung = filter_input(INPUT_POST, "Bewertung", FILTER_SANITIZE_NUMBER_INT);
+    $Unterkunft->Bewertung = ($bewertung === "" ? null : $bewertung);
+    $Unterkunft->Unterkunftsart = filter_input(INPUT_POST, "Unterkunftsart", FILTER_SANITIZE_NUMBER_INT);
+    $Unterkunft->_Hotelier = $hotelierId;
+
+    $Adresse->Straße = trim((string) filter_input(INPUT_POST, "Strasse"));
+    $Adresse->Hausnummer = filter_input(INPUT_POST, "Hausnummer", FILTER_SANITIZE_NUMBER_INT);
+    $Adresse->Postleitzahl = filter_input(INPUT_POST, "Postleitzahl", FILTER_SANITIZE_NUMBER_INT);
+    $Adresse->Ortschaft = trim((string) filter_input(INPUT_POST, "Ortschaft"));
+    $breitengrad = str_replace(",", ".", trim((string) filter_input(INPUT_POST, "Breitengrad")));
+    $laengengrad = str_replace(",", ".", trim((string) filter_input(INPUT_POST, "Laengengrad")));
+    $distanzzurStadt = filter_input(INPUT_POST, "DistanzzurStadt", FILTER_SANITIZE_NUMBER_INT);
+    $Adresse->Breitengrad = ($breitengrad === "" ? null : $breitengrad);
+    $Adresse->Laengengrad = ($laengengrad === "" ? null : $laengengrad);
+    $Adresse->DistanzzurStadt = ($distanzzurStadt === "" ? null : $distanzzurStadt);
+
+    $eingabenKorrekt = true;
+    if ($Unterkunft->Name == "" || !$Unterkunft->Unterkunftsart) {
+        Core::addError("Bitte Name und Unterkunftsart angeben");
+        $eingabenKorrekt = false;
+    }
+    if ($Adresse->Straße == "" || !$Adresse->Hausnummer || !$Adresse->Postleitzahl || $Adresse->Ortschaft == "") {
+        Core::addError("Bitte Straße, Hausnummer, Postleitzahl und Ort vollständig angeben");
+        $eingabenKorrekt = false;
+    }
+    if ($Adresse->validate() !== true || $Unterkunft->validate() !== true) {
+        $eingabenKorrekt = false;
+    }
+
+    if ($eingabenKorrekt) {
         try {
             Core::$pdo->beginTransaction();
+
+            if (!$Adresse->update()) {
+                throw new RuntimeException('Adresse konnte nicht aktualisiert werden');
+            }
+            $Unterkunft->_Adresse = $Adresse->id;
             if (!$Unterkunft->update()) {
                 throw new RuntimeException('Unterkunft konnte nicht aktualisiert werden');
             }
             saveUnterkunftAusstattung($id, $selectedAusstattungIds);
+
             Core::$pdo->commit();
 
             foreach ($_FILES as $filekey => $file) {
@@ -36,25 +98,22 @@ if (count($_POST) > 0 && $_GET["task"] != "favoriten") {
                     }
                 }
             }
+
             Core::redirect("Unterkunft_detail&id=$id", ["message" => "Unterkunft und Ausstattung erfolgreich aktualisiert"]);
+            return;
         } catch (Throwable $error) {
             if (Core::$pdo->inTransaction()) {
                 Core::$pdo->rollBack();
             }
-            Core::addError("Unterkunft und Ausstattung konnten nicht vollständig gespeichert werden");
+            Core::addError("Unterkunft, Adresse oder Ausstattung konnten nicht aktualisiert werden");
             Core::debug($error->getMessage());
         }
-    } else {
-        Core::addError("Die eingegebenen Daten waren nicht korrekt");
     }
 }
 
-$_Adresse = Adresse::findAll();
-Core::publish($_Adresse, "_Adresse");
-$_Hotelier = Hotelier::findAll();
-Core::publish($_Hotelier, "_Hotelier");
 $UnterkunftsartT = UnterkunftsartT::findAll();
 Core::publish($UnterkunftsartT, "UnterkunftsartT");
+Core::publish($Adresse, "Adresse");
 Core::publish($Ausstattung_list, "Ausstattung_list");
 Core::publish($selectedAusstattungIds, "selectedAusstattungIds");
 Core::publish($Unterkunft, "Unterkunft");
