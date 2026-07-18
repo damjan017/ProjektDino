@@ -7,6 +7,7 @@ $checkout       = Core::import("checkout");
 $Ausstattung_list = Core::import("Ausstattung_list");
 $selectedAusstattungIds = Core::import("selectedAusstattungIds");
 $selectedAusstattungLabels = Core::import("selectedAusstattungLabels");
+$sucheAusgefuehrt = Core::import("sucheAusgefuehrt");
 ?>
 
 <div class="wb-hero" style="padding:24px 16px;">
@@ -119,7 +120,7 @@ $selectedAusstattungLabels = Core::import("selectedAusstattungLabels");
         <?php endforeach; ?>
     </div>
 
-<?php elseif (isset($_POST["suchen"])): ?>
+<?php elseif ($sucheAusgefuehrt): ?>
 
     <div class="wb-section" style="text-align:center;">
         <p>Keine verfügbaren Zimmer für Ihre Suche gefunden.</p>

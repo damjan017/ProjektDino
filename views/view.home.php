@@ -1,5 +1,6 @@
 <?php
 $istHotelier = Core::import("istHotelier");
+$reiseziele  = Core::import("reiseziele");
 ?>
 
 <div class="wb-hero">
@@ -17,3 +18,16 @@ $istHotelier = Core::import("istHotelier");
         <a href="?task=login" data-ajax="false">Als Hotelier anmelden</a>
     <?php endif; ?>
 </div>
+
+<?php if (!empty($reiseziele)): ?>
+<h3 style="margin-top:24px;">Beliebte Reiseziele</h3>
+<div class="wb-destination-grid">
+    <?php foreach ($reiseziele as $ziel): ?>
+        <a class="wb-destination-card" data-ajax="false"
+           href="?task=Zimmersuche&amp;suchbegriff=<?=urlencode($ziel->Ortschaft)?>">
+            <img src="images/<?=htmlspecialchars($ziel->Bild)?>" alt="<?=htmlspecialchars($ziel->Ortschaft)?>" />
+            <span class="wb-destination-name"><?=htmlspecialchars($ziel->Ortschaft)?></span>
+        </a>
+    <?php endforeach; ?>
+</div>
+<?php endif; ?>

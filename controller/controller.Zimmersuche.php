@@ -14,11 +14,17 @@ $anzahl_gaeste = 1;
 $checkin  = date("Y-m-d");
 $checkout = date("Y-m-d", strtotime("+1 day"));
 
-if (count($_POST) > 0 && isset($_POST["suchen"])) {
-    $suchbegriff = trim((string) ($_POST["suchbegriff"] ?? ""));
-    $anzahl_gaeste = (string) ($_POST["anzahl_gaeste"] ?? "");
-    $checkin = trim((string) ($_POST["checkin"] ?? ""));
-    $checkout = trim((string) ($_POST["checkout"] ?? ""));
+// Suche wird entweder ueber das abgeschickte Formular (POST) ausgeloest,
+// oder ueber einen Link mit Suchbegriff (GET, z.B. von der Reiseziele-Galerie auf der Startseite).
+$istFormularSuche = count($_POST) > 0 && isset($_POST["suchen"]);
+$istLinkSuche = !$istFormularSuche && isset($_GET["suchbegriff"]) && $_GET["suchbegriff"] !== "";
+
+if ($istFormularSuche || $istLinkSuche) {
+    $quelle = $istFormularSuche ? $_POST : $_GET;
+    $suchbegriff = trim((string) ($quelle["suchbegriff"] ?? ""));
+    $anzahl_gaeste = (string) ($quelle["anzahl_gaeste"] ?? $anzahl_gaeste);
+    $checkin = trim((string) ($quelle["checkin"] ?? $checkin));
+    $checkout = trim((string) ($quelle["checkout"] ?? $checkout));
     $eingabenKorrekt = true;
 
     $selectedAusstattungIds = existingAusstattungIds(postedAusstattungIds(), $Ausstattung_list);
@@ -130,6 +136,7 @@ if (count($_POST) > 0 && isset($_POST["suchen"])) {
     }
 }
 
+Core::publish($istFormularSuche || $istLinkSuche, "sucheAusgefuehrt");
 Core::publish($Zimmertyp_list, "Zimmertyp_list");
 Core::publish($Ausstattung_list, "Ausstattung_list");
 Core::publish($selectedAusstattungIds, "selectedAusstattungIds");
