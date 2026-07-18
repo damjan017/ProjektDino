@@ -19,3 +19,14 @@ $reiseziele = Unterkunft::query(
     true
 );
 Core::publish($reiseziele, "reiseziele");
+
+// Kennzahlen fuer die Startseite (Unterkuenfte / Staedte / Zimmertypen)
+$kennzahlen = Unterkunft::query(
+    "SELECT
+        (SELECT COUNT(*) FROM Unterkunft) AS anzahlUnterkuenfte,
+        (SELECT COUNT(DISTINCT a.Ortschaft) FROM Adresse a) AS anzahlStaedte,
+        (SELECT COUNT(*) FROM Zimmertyp) AS anzahlZimmertypen",
+    [],
+    true
+);
+Core::publish($kennzahlen[0] ?? null, "kennzahlen");
