@@ -1,18 +1,7 @@
 <?php
-//$user = new User;
-$title = Core::$title;
-Core::publish($title, "title");
-
-//Startseiten Dashboard:
-$menuKey = "home";
-require "controller.dashboard.php";    
-
-//Startseite render Zusatzinfo:
-if (Core::$user->id==""){
-$title = Core::$title;
-Core::publish($title, "title");   
-}else{
-}
-
+Core::$title = "Wingbooking";
 Core::setView("home", "view1");
-Core::$title = "Home";
+
+$istHotelier = isset(Core::$user->Gruppe_literal)
+    && strcasecmp((string) Core::$user->Gruppe_literal, "Hotelier") === 0;
+Core::publish($istHotelier, "istHotelier");

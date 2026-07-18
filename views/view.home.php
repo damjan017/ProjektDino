@@ -1,42 +1,19 @@
 <?php
-$title=Core::import("title");
-
-$menu=Core::import("menu");
-$class=Core::import("class");
-$menuItems=Core::import("menuItems");
-$menuLeadingItems=Core::import("menuLeadingItems");
-$image=Core::import("image");
-
-if($menu["heading"] == ""){
-    $menu["heading"] = "Willkommen bei ".$title."!";
-}
+$istHotelier = Core::import("istHotelier");
 ?>
 
-
-<div class="dashboardwrapper">
-<?=$image?>
-<div class="hometitle">
-  <span class="hometitle-span"><?=$menu["heading"];?></span>
-  <hr class="hr-text" data-content="<?=$menu["text"];?>">
+<div class="wb-hero">
+    <h1 class="wb-hero-title">Wingbooking</h1>
+    <p class="wb-hero-subtitle">Unterkünfte in ganz Baden-Württemberg finden und direkt buchen.</p>
+    <a href="?task=Zimmersuche" class="ui-btn ui-btn-b ui-icon-search ui-btn-icon-left wb-hero-btn" data-ajax="false">
+        Jetzt Zimmer suchen
+    </a>
 </div>
 
-<ol class="articles lI">
-<?php
-if(array_key_exists(0, $menuLeadingItems)){
-  foreach($menuLeadingItems as $key => $item){
-    Menu::showMenuItem($item,$key, "dashboardMenu");
-  }  
-}
-?>
-</ol>
-
-<ol class="articles fI" style="grid-template-columns:repeat(2,1fr)">    
-<?php
-if(isset($menuItems)){
-  foreach($menuItems as $key => $item){
-    Menu::showMenuItem($item,$key, "dashboardMenu");
-  }  
-}
-?>
-</ol>
+<div class="wb-hero-links">
+    <?php if ($istHotelier): ?>
+        <a href="?task=Unterkunft" data-ajax="false">Meine Unterkünfte verwalten</a>
+    <?php else: ?>
+        <a href="?task=login" data-ajax="false">Als Hotelier anmelden</a>
+    <?php endif; ?>
 </div>
