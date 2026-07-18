@@ -1,13 +1,14 @@
 <?php
 $Zimmertyp_list = Core::$view->Zimmertyp_list;
 $access = Core::import("access");
+$istAdmin = Core::import("istAdmin");
 ?>
 <div data-role="ui-bar ui-bar-a">
-    <h1>Meine Zimmertypen</h1>
+    <h1><?=$istAdmin ? "Alle Zimmertypen" : "Meine Zimmertypen"?></h1>
 </div>
 
 <form>
-    <input id="filterTable-input" data-type="search" placeholder="Eigene Zimmertypen durchsuchen...">
+    <input id="filterTable-input" data-type="search" placeholder="Zimmertypen durchsuchen...">
 </form>
 
 <div class="overflowx">
@@ -18,6 +19,7 @@ $access = Core::import("access");
 <tr>
     <th>Bezeichnung</th>
     <th>Unterkunft</th>
+    <?php if ($istAdmin): ?><th>Hotelier</th><?php endif; ?>
     <th>Betten</th>
     <th>Bettart</th>
     <th>Preis pro Nacht</th>
@@ -30,6 +32,9 @@ $access = Core::import("access");
 <tr>
     <td><?=htmlspecialchars((string) $zimmertyp->Bezeichnung_literal)?></td>
     <td><?=htmlspecialchars((string) $zimmertyp->Unterkunft_Name)?></td>
+    <?php if ($istAdmin): ?>
+    <td><?=htmlspecialchars((string) $zimmertyp->HotelierName)?></td>
+    <?php endif; ?>
     <td><?=(int) $zimmertyp->Anzahltbett?></td>
     <td><?=htmlspecialchars((string) $zimmertyp->ArtBett)?></td>
     <td>
@@ -42,15 +47,13 @@ $access = Core::import("access");
     </td>
     <td><?=(int) $zimmertyp->AnzahlVerfuegbarkeit?></td>
     <td>
-        <?php if ($access["detail"] == "true"): ?>
         <a href="?task=Zimmertyp_detail&amp;id=<?=(int) $zimmertyp->id?>" data-ajax="false"
            class="ui-btn ui-icon-eye ui-btn-icon-notext ui-corner-all ui-btn-inline">Details</a>
-        <?php endif; ?>
-        <?php if ($access["edit"] == "true"): ?>
+        <?php if (!$istAdmin && $access["edit"] == "true"): ?>
         <a href="?task=Zimmertyp_edit&amp;id=<?=(int) $zimmertyp->id?>" data-ajax="false"
            class="ui-btn ui-icon-pencil ui-btn-icon-notext ui-corner-all ui-btn-inline">Bearbeiten</a>
         <?php endif; ?>
-        <?php if ($access["delete"] == "true"): ?>
+        <?php if (!$istAdmin && $access["delete"] == "true"): ?>
         <a href="?task=Zimmertyp_delete&amp;id=<?=(int) $zimmertyp->id?>" data-ajax="false"
            class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all ui-btn-inline"
            onclick="return confirm('Zimmertyp wirklich löschen?')">Löschen</a>
@@ -63,10 +66,10 @@ $access = Core::import("access");
 </div>
 
 <?php if (count($Zimmertyp_list) === 0): ?>
-<p>Für Ihre Unterkünfte wurden noch keine Zimmertypen angelegt.</p>
+<p><?=$istAdmin ? "Es sind noch keine Zimmertypen angelegt." : "Für Ihre Unterkünfte wurden noch keine Zimmertypen angelegt."?></p>
 <?php endif; ?>
 
-<?php if ($access["new"] == "true"): ?>
+<?php if (!$istAdmin && $access["new"] == "true"): ?>
 <a href="?task=Zimmertyp_new" class="ui-btn ui-btn-b ui-icon-plus ui-btn-icon-left" data-ajax="false">
     Neuen Zimmertyp anlegen
 </a>

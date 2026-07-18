@@ -1,14 +1,29 @@
 <?php
 $istHotelier = isset(Core::$user->Gruppe_literal)
     && strcasecmp((string) Core::$user->Gruppe_literal, "Hotelier") === 0;
-if (!$istHotelier) {
+$istAdmin = isset(Core::$user->Gruppe_literal)
+    && strcasecmp((string) Core::$user->Gruppe_literal, "Administrator") === 0;
+
+if (!$istHotelier && !$istAdmin) {
     Core::redirect("error", ["errorMsg" => "Nur Hotelier dürfen Zimmertypen verwalten"]);
     return;
 }
 
 $taskType = "detail";
 $classSettings = Zimmertyp::$settings;
-$access = Core::checkAccessGui($classSettings, $taskType);
+if ($istHotelier) {
+    $access = Core::checkAccessGui($classSettings, $taskType);
+} else {
+    // Administrator darf nur ansehen, keine Verwaltungsaktionen.
+    $access = [
+        "delete" => "false",
+        "detail" => "true",
+        "new" => "false",
+        "list" => "false",
+        "edit" => "false",
+        "relations" => "false"
+    ];
+}
 Core::publish($access, "access");
 Core::$title = "Detail: Zimmertyp";
 Core::setView("Zimmertyp_detail", "view1", "detail");
@@ -29,7 +44,7 @@ if (!$Unterkunft->loadDBData($Zimmertyp->_Unterkunft)) {
     Core::redirect("Zimmertyp", ["errorMsg" => "Die zugehörige Unterkunft wurde nicht gefunden"]);
     return;
 }
-if ($hotelierId <= 0 || (int) $Unterkunft->_Hotelier !== $hotelierId) {
+if ($istHotelier && ($hotelierId <= 0 || (int) $Unterkunft->_Hotelier !== $hotelierId)) {
     Core::redirect("Zimmertyp", ["errorMsg" => "Dieser Zimmertyp gehört nicht zu Ihrem Konto"]);
     return;
 }
