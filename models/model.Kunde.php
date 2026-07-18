@@ -32,7 +32,11 @@ public function registrieren ($return){
 //Hier ist Platz für die Funktion registrieren
 }
 public function pruefeAlter ($return){
-//Hier ist Platz für die Funktion pruefeAlter
+    // Hauptgast muss bei Buchung mindestens 18 Jahre alt sein
+    $geburtsdatum = new DateTime($this->Geburtsdatum);
+    $heute = new DateTime();
+    $alter = $heute->diff($geburtsdatum)->y;
+    return $alter >= 18;
 }
 const SQL_SELECT_Buchung_b='select Kunde.id as id, Kunde.Nachname as Nachname, Kunde.Vorname as Vorname, Kunde.Email as Email, Kunde.Geburtsdatum as Geburtsdatum, Kunde.Personalausweisnrummer as Personalausweisnrummer from Kunde where Kunde.id = ?';
 const SQL_SELECT_User_uid='select Kunde.id as id, Kunde.Nachname as Nachname, Kunde.Vorname as Vorname, Kunde.Email as Email, Kunde.Geburtsdatum as Geburtsdatum, Kunde.Personalausweisnrummer as Personalausweisnrummer from Kunde where Kunde._User_uid=?';

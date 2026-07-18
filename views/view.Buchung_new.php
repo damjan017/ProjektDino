@@ -83,10 +83,28 @@ $zimmertyp_id  = $Buchung->_Zimmertyp  ?: $_GET["zimmertyp_id"];
             <option value="">– bitte wählen –</option>
             <?php if (is_array($ZahlungsartT)): ?>
                 <?php foreach ($ZahlungsartT as $za): ?>
-                    <option value="<?=$za->id?>"><?=htmlspecialchars($za->literal)?></option>
+                    <?php
+                    $lit = strtolower($za->literal);
+                    if (strpos($lit, 'kreditkarte') !== false)      $typ = 'kreditkarte';
+                    elseif (strpos($lit, 'lastschrift') !== false)   $typ = 'lastschrift';
+                    else                                              $typ = 'bar';
+                    ?>
+                    <option value="<?=$za->id?>" data-typ="<?=$typ?>"><?=htmlspecialchars($za->literal)?></option>
                 <?php endforeach; ?>
             <?php endif; ?>
         </select>
+    </div>
+
+    <div id="zahlung_kreditkarte" style="display:none;" class="ui-field-contain">
+        <label>Kartennummer:</label>
+        <input type="text" placeholder="1234 5678 9012 3456" autocomplete="off" />
+        <label>Ablaufdatum:</label>
+        <input type="month" placeholder="MM/JJ" />
+    </div>
+
+    <div id="zahlung_lastschrift" style="display:none;" class="ui-field-contain">
+        <label>IBAN:</label>
+        <input type="text" placeholder="DE00 0000 0000 0000 0000 00" autocomplete="off" />
     </div>
 
     <div style="background:#fffde7; border:1px solid #f9a825; padding:10px; border-radius:4px; margin:10px 0;">
@@ -128,4 +146,11 @@ document.getElementById("AnzahlGaeste").addEventListener("change", function() {
 if (parseInt(document.getElementById("AnzahlGaeste").value) > 1) {
     document.getElementById("AnzahlGaeste").dispatchEvent(new Event("change"));
 }
+
+// Zahlungsart-spezifische Felder ein-/ausblenden
+document.getElementById("Zahlungsart").addEventListener("change", function() {
+    var typ = this.options[this.selectedIndex].getAttribute("data-typ") || "";
+    document.getElementById("zahlung_kreditkarte").style.display = (typ === "kreditkarte") ? "block" : "none";
+    document.getElementById("zahlung_lastschrift").style.display = (typ === "lastschrift") ? "block" : "none";
+});
 </script>
