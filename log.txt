@@ -244,4 +244,134 @@
                   WHERE b._Zimmertyp = z.id
                     AND b.Status != 3
                     AND NOT (b.checkout <= ? OR b.checkin >= ?)
-              ) ORDER BY u.Bewertung DESC
+              ) ORDER BY u.Bewertung DESC18.07.2026 19:43:43 User#find(): SELECT User.Passwort AS identifier,  User.`c_ts` as `c_ts`, User.`m_ts` as `m_ts`, User.`id` as `id`, `User`.`Passwort` as `Passwort`, `GruppeT0`.`literal` as `Gruppe_literal`, `User`.`Gruppe` as `Gruppe`, `User`.`Kennung` as `Kennung`, `User`.`roleid` as `roleid` from User left join `GruppeT` as GruppeT0 on `User`.`Gruppe` = `GruppeT0`.`id`  where User.`id` = ?18.07.2026 19:43:43 GruppeT#findAll(): SELECT GruppeT.literal AS identifier,  GruppeT.* FROM GruppeT18.07.2026 19:43:43 Ausstattung#findAll(): SELECT Ausstattung.Bezeichnung AS identifier,  Ausstattung.`c_ts` as `c_ts`, Ausstattung.`m_ts` as `m_ts`, Ausstattung.`id` as `id`, `Ausstattung`.`Bezeichnung` as `Bezeichnung`, `AusstattungskategorieT0`.`literal` as `Kategorie_literal`, `Ausstattung`.`Kategorie` as `Kategorie` from Ausstattung left join `AusstattungskategorieT` as AusstattungskategorieT0 on `Ausstattung`.`Kategorie` = `AusstattungskategorieT0`.`id` 18.07.2026 19:43:44 User#find(): SELECT User.Passwort AS identifier,  User.`c_ts` as `c_ts`, User.`m_ts` as `m_ts`, User.`id` as `id`, `User`.`Passwort` as `Passwort`, `GruppeT0`.`literal` as `Gruppe_literal`, `User`.`Gruppe` as `Gruppe`, `User`.`Kennung` as `Kennung`, `User`.`roleid` as `roleid` from User left join `GruppeT` as GruppeT0 on `User`.`Gruppe` = `GruppeT0`.`id`  where User.`id` = ?18.07.2026 19:43:44 GruppeT#findAll(): SELECT GruppeT.literal AS identifier,  GruppeT.* FROM GruppeT18.07.2026 19:43:44 Ausstattung#findAll(): SELECT Ausstattung.Bezeichnung AS identifier,  Ausstattung.`c_ts` as `c_ts`, Ausstattung.`m_ts` as `m_ts`, Ausstattung.`id` as `id`, `Ausstattung`.`Bezeichnung` as `Bezeichnung`, `AusstattungskategorieT0`.`literal` as `Kategorie_literal`, `Ausstattung`.`Kategorie` as `Kategorie` from Ausstattung left join `AusstattungskategorieT` as AusstattungskategorieT0 on `Ausstattung`.`Kategorie` = `AusstattungskategorieT0`.`id` 18.07.2026 19:43:44 Zimmertyp#query(): SELECT z.id as id,
+                   zt.literal as Bezeichnung_literal,
+                   z.Bezeichnung as Bezeichnung,
+                   z.Anzahltbett as Anzahltbett,
+                   z.ArtBett as ArtBett,
+                   z.Preis as Preis,
+                   z.Aktionspreis as Aktionspreis,
+                   z.Aktionaktiv as Aktionaktiv,
+                   z.Bild as Bild,
+                   z.AnzahlVerfuegbarkeit as AnzahlVerfuegbarkeit,
+                   u.Name as Unterkunft_Name,
+                   u.id as _Unterkunft,
+                   u.Bewertung as Bewertung,
+                   u.Bild as Unterkunft_Bild,
+                   a.Ortschaft as Ortschaft,
+                   a.DistanzzurStadt as DistanzzurStadt
+            FROM Zimmertyp z
+            LEFT JOIN ZimmertypT zt ON z.Bezeichnung = zt.id
+            LEFT JOIN Unterkunft u  ON z._Unterkunft = u.id
+            LEFT JOIN Adresse a     ON u._Adresse = a.id
+            WHERE z.Anzahltbett >= ?
+              AND (u.Name LIKE ? OR a.Ortschaft LIKE ?)
+              AND z.AnzahlVerfuegbarkeit > (
+                  SELECT COUNT(*) FROM Buchung b
+                  WHERE b._Zimmertyp = z.id
+                    AND b.Status != 3
+                    AND NOT (b.checkout <= ? OR b.checkin >= ?)
+              ) ORDER BY u.Bewertung DESC18.07.2026 19:44:26 User#find(): SELECT User.Passwort AS identifier,  User.`c_ts` as `c_ts`, User.`m_ts` as `m_ts`, User.`id` as `id`, `User`.`Passwort` as `Passwort`, `GruppeT0`.`literal` as `Gruppe_literal`, `User`.`Gruppe` as `Gruppe`, `User`.`Kennung` as `Kennung`, `User`.`roleid` as `roleid` from User left join `GruppeT` as GruppeT0 on `User`.`Gruppe` = `GruppeT0`.`id`  where User.`id` = ?18.07.2026 19:44:26 GruppeT#findAll(): SELECT GruppeT.literal AS identifier,  GruppeT.* FROM GruppeT18.07.2026 19:44:26 Unterkunft#find(): SELECT Unterkunft.`c_ts` as `c_ts`, Unterkunft.`m_ts` as `m_ts`, Unterkunft.`id` as `id`, Unterkunft._Adresse as _Adresse, Unterkunft._Hotelier as _Hotelier, `UnterkunftsartT0`.`literal` as `Unterkunftsart_literal`, `Unterkunft`.`Unterkunftsart` as `Unterkunftsart`, `Unterkunft`.`Name` as `Name`, `Unterkunft`.`Bild` as `Bild`, `Unterkunft`.`Beschreibung` as `Beschreibung`, `Unterkunft`.`Bewertung` as `Bewertung` from Unterkunft left join `UnterkunftsartT` as UnterkunftsartT0 on `Unterkunft`.`Unterkunftsart` = `UnterkunftsartT0`.`id`  where Unterkunft.`id` = ?18.07.2026 19:44:26 Adresse#find(): SELECT Adresse.`c_ts` as `c_ts`, Adresse.`m_ts` as `m_ts`, Adresse.`id` as `id`, `Adresse`.`Straße` as `Straße`, `Adresse`.`Hausnummer` as `Hausnummer`, `Adresse`.`Postleitzahl` as `Postleitzahl`, `Adresse`.`Ortschaft` as `Ortschaft`, `Adresse`.`Breitengrad` as `Breitengrad`, `Adresse`.`Laengengrad` as `Laengengrad`, `Adresse`.`DistanzzurStadt` as `DistanzzurStadt` from Adresse where Adresse.`id` = ?18.07.2026 19:44:26 DB#query(): SELECT z.id,
+            zt.literal AS Bezeichnung_literal,
+            z.Anzahltbett,
+            z.ArtBett,
+            z.Preis,
+            z.Aktionspreis,
+            z.Aktionaktiv,
+            z.Bild,
+            z.AnzahlVerfuegbarkeit
+     FROM Zimmertyp z
+     LEFT JOIN ZimmertypT zt ON z.Bezeichnung = zt.id
+     WHERE z._Unterkunft = ?
+     ORDER BY zt.literal18.07.2026 19:44:26 DB#query(): SELECT a.id,
+            a.Bezeichnung,
+            ak.literal AS Kategorie_literal
+     FROM Ausstattung a
+     INNER JOIN Unterkunft_Ausstattung ua ON a.id = ua._Ausstattung_b
+     LEFT JOIN AusstattungskategorieT ak ON a.Kategorie = ak.id
+     WHERE ua._Unterkunft_a = ?
+     ORDER BY ak.literal, a.Bezeichnung18.07.2026 19:44:33 User#find(): SELECT User.Passwort AS identifier,  User.`c_ts` as `c_ts`, User.`m_ts` as `m_ts`, User.`id` as `id`, `User`.`Passwort` as `Passwort`, `GruppeT0`.`literal` as `Gruppe_literal`, `User`.`Gruppe` as `Gruppe`, `User`.`Kennung` as `Kennung`, `User`.`roleid` as `roleid` from User left join `GruppeT` as GruppeT0 on `User`.`Gruppe` = `GruppeT0`.`id`  where User.`id` = ?18.07.2026 19:44:33 GruppeT#findAll(): SELECT GruppeT.literal AS identifier,  GruppeT.* FROM GruppeT18.07.2026 19:44:34 User#find(): SELECT User.Passwort AS identifier,  User.`c_ts` as `c_ts`, User.`m_ts` as `m_ts`, User.`id` as `id`, `User`.`Passwort` as `Passwort`, `GruppeT0`.`literal` as `Gruppe_literal`, `User`.`Gruppe` as `Gruppe`, `User`.`Kennung` as `Kennung`, `User`.`roleid` as `roleid` from User left join `GruppeT` as GruppeT0 on `User`.`Gruppe` = `GruppeT0`.`id`  where User.`id` = ?18.07.2026 19:44:34 GruppeT#findAll(): SELECT GruppeT.literal AS identifier,  GruppeT.* FROM GruppeT18.07.2026 19:44:36 User#find(): SELECT User.Passwort AS identifier,  User.`c_ts` as `c_ts`, User.`m_ts` as `m_ts`, User.`id` as `id`, `User`.`Passwort` as `Passwort`, `GruppeT0`.`literal` as `Gruppe_literal`, `User`.`Gruppe` as `Gruppe`, `User`.`Kennung` as `Kennung`, `User`.`roleid` as `roleid` from User left join `GruppeT` as GruppeT0 on `User`.`Gruppe` = `GruppeT0`.`id`  where User.`id` = ?18.07.2026 19:44:36 GruppeT#findAll(): SELECT GruppeT.literal AS identifier,  GruppeT.* FROM GruppeT18.07.2026 19:44:36 Unterkunft#find(): SELECT Unterkunft.`c_ts` as `c_ts`, Unterkunft.`m_ts` as `m_ts`, Unterkunft.`id` as `id`, Unterkunft._Adresse as _Adresse, Unterkunft._Hotelier as _Hotelier, `UnterkunftsartT0`.`literal` as `Unterkunftsart_literal`, `Unterkunft`.`Unterkunftsart` as `Unterkunftsart`, `Unterkunft`.`Name` as `Name`, `Unterkunft`.`Bild` as `Bild`, `Unterkunft`.`Beschreibung` as `Beschreibung`, `Unterkunft`.`Bewertung` as `Bewertung` from Unterkunft left join `UnterkunftsartT` as UnterkunftsartT0 on `Unterkunft`.`Unterkunftsart` = `UnterkunftsartT0`.`id`  where Unterkunft.`id` = ?18.07.2026 19:44:36 Adresse#find(): SELECT Adresse.`c_ts` as `c_ts`, Adresse.`m_ts` as `m_ts`, Adresse.`id` as `id`, `Adresse`.`Straße` as `Straße`, `Adresse`.`Hausnummer` as `Hausnummer`, `Adresse`.`Postleitzahl` as `Postleitzahl`, `Adresse`.`Ortschaft` as `Ortschaft`, `Adresse`.`Breitengrad` as `Breitengrad`, `Adresse`.`Laengengrad` as `Laengengrad`, `Adresse`.`DistanzzurStadt` as `DistanzzurStadt` from Adresse where Adresse.`id` = ?18.07.2026 19:44:36 DB#query(): SELECT z.id,
+            zt.literal AS Bezeichnung_literal,
+            z.Anzahltbett,
+            z.ArtBett,
+            z.Preis,
+            z.Aktionspreis,
+            z.Aktionaktiv,
+            z.Bild,
+            z.AnzahlVerfuegbarkeit
+     FROM Zimmertyp z
+     LEFT JOIN ZimmertypT zt ON z.Bezeichnung = zt.id
+     WHERE z._Unterkunft = ?
+     ORDER BY zt.literal18.07.2026 19:44:36 DB#query(): SELECT a.id,
+            a.Bezeichnung,
+            ak.literal AS Kategorie_literal
+     FROM Ausstattung a
+     INNER JOIN Unterkunft_Ausstattung ua ON a.id = ua._Ausstattung_b
+     LEFT JOIN AusstattungskategorieT ak ON a.Kategorie = ak.id
+     WHERE ua._Unterkunft_a = ?
+     ORDER BY ak.literal, a.Bezeichnung18.07.2026 19:44:36 User#find(): SELECT User.Passwort AS identifier,  User.`c_ts` as `c_ts`, User.`m_ts` as `m_ts`, User.`id` as `id`, `User`.`Passwort` as `Passwort`, `GruppeT0`.`literal` as `Gruppe_literal`, `User`.`Gruppe` as `Gruppe`, `User`.`Kennung` as `Kennung`, `User`.`roleid` as `roleid` from User left join `GruppeT` as GruppeT0 on `User`.`Gruppe` = `GruppeT0`.`id`  where User.`id` = ?18.07.2026 19:44:36 GruppeT#findAll(): SELECT GruppeT.literal AS identifier,  GruppeT.* FROM GruppeT18.07.2026 19:44:36 Unterkunft#find(): SELECT Unterkunft.`c_ts` as `c_ts`, Unterkunft.`m_ts` as `m_ts`, Unterkunft.`id` as `id`, Unterkunft._Adresse as _Adresse, Unterkunft._Hotelier as _Hotelier, `UnterkunftsartT0`.`literal` as `Unterkunftsart_literal`, `Unterkunft`.`Unterkunftsart` as `Unterkunftsart`, `Unterkunft`.`Name` as `Name`, `Unterkunft`.`Bild` as `Bild`, `Unterkunft`.`Beschreibung` as `Beschreibung`, `Unterkunft`.`Bewertung` as `Bewertung` from Unterkunft left join `UnterkunftsartT` as UnterkunftsartT0 on `Unterkunft`.`Unterkunftsart` = `UnterkunftsartT0`.`id`  where Unterkunft.`id` = ?18.07.2026 19:44:36 Adresse#find(): SELECT Adresse.`c_ts` as `c_ts`, Adresse.`m_ts` as `m_ts`, Adresse.`id` as `id`, `Adresse`.`Straße` as `Straße`, `Adresse`.`Hausnummer` as `Hausnummer`, `Adresse`.`Postleitzahl` as `Postleitzahl`, `Adresse`.`Ortschaft` as `Ortschaft`, `Adresse`.`Breitengrad` as `Breitengrad`, `Adresse`.`Laengengrad` as `Laengengrad`, `Adresse`.`DistanzzurStadt` as `DistanzzurStadt` from Adresse where Adresse.`id` = ?18.07.2026 19:44:36 DB#query(): SELECT z.id,
+            zt.literal AS Bezeichnung_literal,
+            z.Anzahltbett,
+            z.ArtBett,
+            z.Preis,
+            z.Aktionspreis,
+            z.Aktionaktiv,
+            z.Bild,
+            z.AnzahlVerfuegbarkeit
+     FROM Zimmertyp z
+     LEFT JOIN ZimmertypT zt ON z.Bezeichnung = zt.id
+     WHERE z._Unterkunft = ?
+     ORDER BY zt.literal18.07.2026 19:44:36 DB#query(): SELECT a.id,
+            a.Bezeichnung,
+            ak.literal AS Kategorie_literal
+     FROM Ausstattung a
+     INNER JOIN Unterkunft_Ausstattung ua ON a.id = ua._Ausstattung_b
+     LEFT JOIN AusstattungskategorieT ak ON a.Kategorie = ak.id
+     WHERE ua._Unterkunft_a = ?
+     ORDER BY ak.literal, a.Bezeichnung18.07.2026 19:44:37 User#find(): SELECT User.Passwort AS identifier,  User.`c_ts` as `c_ts`, User.`m_ts` as `m_ts`, User.`id` as `id`, `User`.`Passwort` as `Passwort`, `GruppeT0`.`literal` as `Gruppe_literal`, `User`.`Gruppe` as `Gruppe`, `User`.`Kennung` as `Kennung`, `User`.`roleid` as `roleid` from User left join `GruppeT` as GruppeT0 on `User`.`Gruppe` = `GruppeT0`.`id`  where User.`id` = ?18.07.2026 19:44:37 GruppeT#findAll(): SELECT GruppeT.literal AS identifier,  GruppeT.* FROM GruppeT18.07.2026 19:44:38 User#find(): SELECT User.Passwort AS identifier,  User.`c_ts` as `c_ts`, User.`m_ts` as `m_ts`, User.`id` as `id`, `User`.`Passwort` as `Passwort`, `GruppeT0`.`literal` as `Gruppe_literal`, `User`.`Gruppe` as `Gruppe`, `User`.`Kennung` as `Kennung`, `User`.`roleid` as `roleid` from User left join `GruppeT` as GruppeT0 on `User`.`Gruppe` = `GruppeT0`.`id`  where User.`id` = ?18.07.2026 19:44:38 GruppeT#findAll(): SELECT GruppeT.literal AS identifier,  GruppeT.* FROM GruppeT18.07.2026 19:44:41 User#find(): SELECT User.Passwort AS identifier,  User.`c_ts` as `c_ts`, User.`m_ts` as `m_ts`, User.`id` as `id`, `User`.`Passwort` as `Passwort`, `GruppeT0`.`literal` as `Gruppe_literal`, `User`.`Gruppe` as `Gruppe`, `User`.`Kennung` as `Kennung`, `User`.`roleid` as `roleid` from User left join `GruppeT` as GruppeT0 on `User`.`Gruppe` = `GruppeT0`.`id`  where User.`id` = ?18.07.2026 19:44:41 GruppeT#findAll(): SELECT GruppeT.literal AS identifier,  GruppeT.* FROM GruppeT18.07.2026 19:44:41 Buchung#findAll(): SELECT Buchung.checkin AS identifier,  Buchung.`c_ts` as `c_ts`, Buchung.`m_ts` as `m_ts`, Buchung.`id` as `id`, Buchung._Hotelier as _Hotelier, Buchung._Kunde as _Kunde, Buchung._Zimmertyp as _Zimmertyp, `Buchung`.`checkin` as `checkin`, `Buchung`.`checkout` as `checkout`, `Buchung`.`AnzahlGaeste` as `AnzahlGaeste`, `Buchung`.`Gesamtpreis` as `Gesamtpreis`, `ZahlungsartT0`.`literal` as `Zahlungsart_literal`, `Buchung`.`Zahlungsart` as `Zahlungsart`, `Buchung`.`Zahlungsbetrag` as `Zahlungsbetrag`, `StatusT1`.`literal` as `Status_literal`, `Buchung`.`Status` as `Status`, Hotelier.Name AS _Hotelier_identifier, Kunde.Nachname AS _Kunde_identifier, Zimmertyp.Bezeichnung AS _Zimmertyp_identifier from Buchung left join `ZahlungsartT` as ZahlungsartT0 on `Buchung`.`Zahlungsart` = `ZahlungsartT0`.`id`  left join `StatusT` as StatusT1 on `Buchung`.`Status` = `StatusT1`.`id`  LEFT JOIN Hotelier AS Hotelier ON Hotelier.id=Buchung._Hotelier LEFT JOIN Kunde AS Kunde ON Kunde.id=Buchung._Kunde LEFT JOIN Zimmertyp AS Zimmertyp ON Zimmertyp.id=Buchung._Zimmertyp18.07.2026 19:44:42 User#find(): SELECT User.Passwort AS identifier,  User.`c_ts` as `c_ts`, User.`m_ts` as `m_ts`, User.`id` as `id`, `User`.`Passwort` as `Passwort`, `GruppeT0`.`literal` as `Gruppe_literal`, `User`.`Gruppe` as `Gruppe`, `User`.`Kennung` as `Kennung`, `User`.`roleid` as `roleid` from User left join `GruppeT` as GruppeT0 on `User`.`Gruppe` = `GruppeT0`.`id`  where User.`id` = ?18.07.2026 19:44:42 GruppeT#findAll(): SELECT GruppeT.literal AS identifier,  GruppeT.* FROM GruppeT18.07.2026 19:44:42 Ausstattung#findAll(): SELECT Ausstattung.Bezeichnung AS identifier,  Ausstattung.`c_ts` as `c_ts`, Ausstattung.`m_ts` as `m_ts`, Ausstattung.`id` as `id`, `Ausstattung`.`Bezeichnung` as `Bezeichnung`, `AusstattungskategorieT0`.`literal` as `Kategorie_literal`, `Ausstattung`.`Kategorie` as `Kategorie` from Ausstattung left join `AusstattungskategorieT` as AusstattungskategorieT0 on `Ausstattung`.`Kategorie` = `AusstattungskategorieT0`.`id` 18.07.2026 19:44:45 User#find(): SELECT User.Passwort AS identifier,  User.`c_ts` as `c_ts`, User.`m_ts` as `m_ts`, User.`id` as `id`, `User`.`Passwort` as `Passwort`, `GruppeT0`.`literal` as `Gruppe_literal`, `User`.`Gruppe` as `Gruppe`, `User`.`Kennung` as `Kennung`, `User`.`roleid` as `roleid` from User left join `GruppeT` as GruppeT0 on `User`.`Gruppe` = `GruppeT0`.`id`  where User.`id` = ?18.07.2026 19:44:45 GruppeT#findAll(): SELECT GruppeT.literal AS identifier,  GruppeT.* FROM GruppeT18.07.2026 19:44:45 Ausstattung#findAll(): SELECT Ausstattung.Bezeichnung AS identifier,  Ausstattung.`c_ts` as `c_ts`, Ausstattung.`m_ts` as `m_ts`, Ausstattung.`id` as `id`, `Ausstattung`.`Bezeichnung` as `Bezeichnung`, `AusstattungskategorieT0`.`literal` as `Kategorie_literal`, `Ausstattung`.`Kategorie` as `Kategorie` from Ausstattung left join `AusstattungskategorieT` as AusstattungskategorieT0 on `Ausstattung`.`Kategorie` = `AusstattungskategorieT0`.`id` 18.07.2026 19:44:45 Zimmertyp#query(): SELECT z.id as id,
+                   zt.literal as Bezeichnung_literal,
+                   z.Bezeichnung as Bezeichnung,
+                   z.Anzahltbett as Anzahltbett,
+                   z.ArtBett as ArtBett,
+                   z.Preis as Preis,
+                   z.Aktionspreis as Aktionspreis,
+                   z.Aktionaktiv as Aktionaktiv,
+                   z.Bild as Bild,
+                   z.AnzahlVerfuegbarkeit as AnzahlVerfuegbarkeit,
+                   u.Name as Unterkunft_Name,
+                   u.id as _Unterkunft,
+                   u.Bewertung as Bewertung,
+                   u.Bild as Unterkunft_Bild,
+                   a.Ortschaft as Ortschaft,
+                   a.DistanzzurStadt as DistanzzurStadt
+            FROM Zimmertyp z
+            LEFT JOIN ZimmertypT zt ON z.Bezeichnung = zt.id
+            LEFT JOIN Unterkunft u  ON z._Unterkunft = u.id
+            LEFT JOIN Adresse a     ON u._Adresse = a.id
+            WHERE z.Anzahltbett >= ?
+              AND (u.Name LIKE ? OR a.Ortschaft LIKE ?)
+              AND z.AnzahlVerfuegbarkeit > (
+                  SELECT COUNT(*) FROM Buchung b
+                  WHERE b._Zimmertyp = z.id
+                    AND b.Status != 3
+                    AND NOT (b.checkout <= ? OR b.checkin >= ?)
+              ) ORDER BY u.Bewertung DESC18.07.2026 19:44:47 User#find(): SELECT User.Passwort AS identifier,  User.`c_ts` as `c_ts`, User.`m_ts` as `m_ts`, User.`id` as `id`, `User`.`Passwort` as `Passwort`, `GruppeT0`.`literal` as `Gruppe_literal`, `User`.`Gruppe` as `Gruppe`, `User`.`Kennung` as `Kennung`, `User`.`roleid` as `roleid` from User left join `GruppeT` as GruppeT0 on `User`.`Gruppe` = `GruppeT0`.`id`  where User.`id` = ?18.07.2026 19:44:47 GruppeT#findAll(): SELECT GruppeT.literal AS identifier,  GruppeT.* FROM GruppeT18.07.2026 19:44:47 Unterkunft#find(): SELECT Unterkunft.`c_ts` as `c_ts`, Unterkunft.`m_ts` as `m_ts`, Unterkunft.`id` as `id`, Unterkunft._Adresse as _Adresse, Unterkunft._Hotelier as _Hotelier, `UnterkunftsartT0`.`literal` as `Unterkunftsart_literal`, `Unterkunft`.`Unterkunftsart` as `Unterkunftsart`, `Unterkunft`.`Name` as `Name`, `Unterkunft`.`Bild` as `Bild`, `Unterkunft`.`Beschreibung` as `Beschreibung`, `Unterkunft`.`Bewertung` as `Bewertung` from Unterkunft left join `UnterkunftsartT` as UnterkunftsartT0 on `Unterkunft`.`Unterkunftsart` = `UnterkunftsartT0`.`id`  where Unterkunft.`id` = ?18.07.2026 19:44:47 Adresse#find(): SELECT Adresse.`c_ts` as `c_ts`, Adresse.`m_ts` as `m_ts`, Adresse.`id` as `id`, `Adresse`.`Straße` as `Straße`, `Adresse`.`Hausnummer` as `Hausnummer`, `Adresse`.`Postleitzahl` as `Postleitzahl`, `Adresse`.`Ortschaft` as `Ortschaft`, `Adresse`.`Breitengrad` as `Breitengrad`, `Adresse`.`Laengengrad` as `Laengengrad`, `Adresse`.`DistanzzurStadt` as `DistanzzurStadt` from Adresse where Adresse.`id` = ?18.07.2026 19:44:47 DB#query(): SELECT z.id,
+            zt.literal AS Bezeichnung_literal,
+            z.Anzahltbett,
+            z.ArtBett,
+            z.Preis,
+            z.Aktionspreis,
+            z.Aktionaktiv,
+            z.Bild,
+            z.AnzahlVerfuegbarkeit
+     FROM Zimmertyp z
+     LEFT JOIN ZimmertypT zt ON z.Bezeichnung = zt.id
+     WHERE z._Unterkunft = ?
+     ORDER BY zt.literal18.07.2026 19:44:47 DB#query(): SELECT a.id,
+            a.Bezeichnung,
+            ak.literal AS Kategorie_literal
+     FROM Ausstattung a
+     INNER JOIN Unterkunft_Ausstattung ua ON a.id = ua._Ausstattung_b
+     LEFT JOIN AusstattungskategorieT ak ON a.Kategorie = ak.id
+     WHERE ua._Unterkunft_a = ?
+     ORDER BY ak.literal, a.Bezeichnung18.07.2026 19:45:06 User#find(): SELECT User.Passwort AS identifier,  User.`c_ts` as `c_ts`, User.`m_ts` as `m_ts`, User.`id` as `id`, `User`.`Passwort` as `Passwort`, `GruppeT0`.`literal` as `Gruppe_literal`, `User`.`Gruppe` as `Gruppe`, `User`.`Kennung` as `Kennung`, `User`.`roleid` as `roleid` from User left join `GruppeT` as GruppeT0 on `User`.`Gruppe` = `GruppeT0`.`id`  where User.`id` = ?18.07.2026 19:45:06 GruppeT#findAll(): SELECT GruppeT.literal AS identifier,  GruppeT.* FROM GruppeT18.07.2026 19:45:06 Ausstattung#findAll(): SELECT Ausstattung.Bezeichnung AS identifier,  Ausstattung.`c_ts` as `c_ts`, Ausstattung.`m_ts` as `m_ts`, Ausstattung.`id` as `id`, `Ausstattung`.`Bezeichnung` as `Bezeichnung`, `AusstattungskategorieT0`.`literal` as `Kategorie_literal`, `Ausstattung`.`Kategorie` as `Kategorie` from Ausstattung left join `AusstattungskategorieT` as AusstattungskategorieT0 on `Ausstattung`.`Kategorie` = `AusstattungskategorieT0`.`id` 
