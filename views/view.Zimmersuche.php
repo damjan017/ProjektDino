@@ -158,7 +158,7 @@ $selectedAusstattungLabels = Core::import("selectedAusstattungLabels");
 
                     <p style="margin:4px 0;
                               font-size:1.1em;
-                              color:#007;">
+                              color:#626254;">
 
                         <?php if (
                             $zimmer->Aktionaktiv &&
@@ -178,7 +178,7 @@ $selectedAusstattungLabels = Core::import("selectedAusstattungLabels");
 
                             </span>
 
-                            <strong style="color:#c00;">
+                            <strong style="color:#C9950F;">
 
                                 <?=number_format(
                                     $zimmer->Aktionspreis,
@@ -231,7 +231,7 @@ $selectedAusstattungLabels = Core::import("selectedAusstattungLabels");
                     <?php endif; ?>
 
                     <?php if (count($selectedAusstattungLabels) > 0): ?>
-                        <p style="margin:6px 0; color:#285943;">
+                        <p style="margin:6px 0; color:#626254;">
                             <strong>Gewählte Ausstattung:</strong>
                             <?=htmlspecialchars(implode(', ', $selectedAusstattungLabels))?>
                         </p>

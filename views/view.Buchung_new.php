@@ -26,7 +26,7 @@ $zimmertyp_id  = $Buchung->_Zimmertyp  ?: $_GET["zimmertyp_id"];
     $preis = ($Zimmertyp->Aktionaktiv && $Zimmertyp->Aktionspreis > 0)
            ? $Zimmertyp->Aktionspreis : $Zimmertyp->Preis;
     ?>
-    <p style="margin:5px 0; font-size:1.1em; color:#007;">
+    <p style="margin:5px 0; font-size:1.1em; color:#626254;">
         <?=number_format($preis, 2, ',', '.')?> € / Nacht
     </p>
 </div>
@@ -107,7 +107,7 @@ $zimmertyp_id  = $Buchung->_Zimmertyp  ?: $_GET["zimmertyp_id"];
         <input type="text" placeholder="DE00 0000 0000 0000 0000 00" autocomplete="off" />
     </div>
 
-    <div style="background:#fffde7; border:1px solid #f9a825; padding:10px; border-radius:4px; margin:10px 0;">
+    <div style="background:#FFF8E0; border:1px solid #F5BC25; padding:10px; border-radius:4px; margin:10px 0;">
         <strong>Hinweis:</strong> Die Zahlung ist eine Simulation und wird nicht real verarbeitet.
     </div>
 

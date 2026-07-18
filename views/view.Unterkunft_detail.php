@@ -263,7 +263,7 @@ if (!empty($Zimmertyp_b_list)) {
                 <?=htmlspecialchars($zim->ArtBett)?>
             </p>
 
-            <p style="color:#007; font-size:1.1em;">
+            <p style="color:#626254; font-size:1.1em;">
 
                 <?php if (
                     $zim->Aktionaktiv &&
@@ -275,7 +275,7 @@ if (!empty($Zimmertyp_b_list)) {
                         <?=number_format($zim->Preis, 2, ",", ".")?> €
                     </s>
 
-                    <strong style="color:#c00;">
+                    <strong style="color:#C9950F;">
                         <?=number_format($zim->Aktionspreis, 2, ",", ".")?> €
                     </strong>
 

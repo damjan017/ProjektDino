@@ -74,7 +74,7 @@ if (!empty($Zimmertyp->Bild)) {
                 <?=number_format($Zimmertyp->Preis, 2, ",", ".")?> €
             </s>
 
-            <strong style="color:#c00;">
+            <strong style="color:#C9950F;">
                 <?=number_format($Zimmertyp->Aktionspreis, 2, ",", ".")?> €
             </strong>
 

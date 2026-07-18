@@ -8,8 +8,8 @@ $Mitgast_list = Core::import("Mitgast_list");
 ?>
 
 <div style="text-align:center; padding:20px;">
-    <div style="font-size:3em; color:#4caf50;">&#10003;</div>
-    <h2 style="color:#4caf50;">Buchung erfolgreich!</h2>
+    <div style="font-size:3em; color:#F5BC25;">&#10003;</div>
+    <h2 style="color:#F5BC25;">Buchung erfolgreich!</h2>
     <p>Vielen Dank für Ihre Buchung. Ihre Buchungsnummer: <strong>#<?=$Buchung->id?></strong></p>
 </div>
 
@@ -42,7 +42,7 @@ $Mitgast_list = Core::import("Mitgast_list");
         <tr><td style="padding:4px 0;"><strong>Zahlungsart:</strong></td>
             <td><?=htmlspecialchars($Buchung->Zahlungsart_literal)?></td></tr>
         <tr><td style="padding:4px 0;"><strong>Gesamtpreis:</strong></td>
-            <td><strong style="color:#007; font-size:1.2em;">
+            <td><strong style="color:#626254; font-size:1.2em;">
                 <?=number_format($Buchung->Gesamtpreis, 2, ',', '.')?> €
             </strong></td></tr>
     </table>
@@ -63,7 +63,7 @@ $Mitgast_list = Core::import("Mitgast_list");
 </div>
 <?php endif; ?>
 
-<div style="background:#fffde7; border:1px solid #f9a825; padding:10px; border-radius:4px; margin:10px 0;">
+<div style="background:#FFF8E0; border:1px solid #F5BC25; padding:10px; border-radius:4px; margin:10px 0;">
     <strong>Hinweis:</strong> Normalerweise würde eine Bestätigungs-E-Mail versendet werden.
     Die Zahlung ist eine Simulation – keine reale Transaktion.
 </div>
