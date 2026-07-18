@@ -1,6 +1,4 @@
 <?php
-require_once 'includes/ausstattung.functions.php';
-
 $taskType = "edit";
 $classSettings = Ausstattung::$settings;
 $access = Core::checkAccessGui($classSettings, $taskType);
@@ -15,14 +13,14 @@ $Ausstattung->loadDBData($id);
 
 if (count($_POST) > 0 && $_GET["task"] != "favoriten") {
     $a = $Ausstattung->loadFormData();
-    if ($a === true && validateAusstattung($Ausstattung, $id)) {
+    if ($a === true) {
         if ($Ausstattung->update() != "0") {
-            Core::redirect("Ausstattung_detail&id=$id", ["message" => "Ausstattung erfolgreich aktualisiert"]);
+            Core::redirect("Ausstattung_detail&id=$id");
         } else {
             Core::addError("Der Datenbankeintrag war nicht erfolgreich");
         }
-    } elseif ($a !== true) {
-        Core::addError("Die eingegebenen Daten waren nicht korrekt");
+    } else {
+        Core::addError("Die Eingegebenen Daten waren nicht korrekt");
     }
 }
 $AusstattungskategorieT = AusstattungskategorieT::findAll();
