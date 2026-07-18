@@ -2051,7 +2051,7 @@ class DB {
         return $newSettings;
     }
 
-    public function buildScheme($class, $stereotyp = "class") {
+    public static function buildScheme($class, $stereotyp = "class") {
 
         $klasse = lcfirst($class);
         if ($stereotyp == "class") {

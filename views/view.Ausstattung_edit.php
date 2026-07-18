@@ -10,7 +10,8 @@ $AusstattungskategorieT = Core::import("AusstattungskategorieT");
 <div class="ui-field-contain">
     <?php $Ausstattung->renderLabel("Bezeichnung"); $Ausstattung->render("Bezeichnung"); ?>
     <label for="Kategorie">Kategorie:</label>
-    <select name="Kategorie" id="Kategorie">
+    <select name="Kategorie" id="Kategorie" required>
+        <option value="">– bitte wählen –</option>
         <?php if (is_array($AusstattungskategorieT)): ?>
             <?php foreach ($AusstattungskategorieT as $ak): ?>
             <option value="<?=$ak->id?>" <?=($Ausstattung->Kategorie == $ak->id ? 'selected' : '')?>>

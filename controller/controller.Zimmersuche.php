@@ -1,9 +1,14 @@
 <?php
 // Zimmersuche für Gäste – Suche nach Ort, Personenanzahl oder Hotelname
+require_once 'includes/ausstattung.functions.php';
+
 Core::$title = "Zimmer suchen";
 Core::setView("Zimmersuche", "view1", "list");
 
 $Zimmertyp_list = [];
+$Ausstattung_list = Ausstattung::findAll();
+$selectedAusstattungIds = [];
+$selectedAusstattungLabels = [];
 $suchbegriff = "";
 $anzahl_gaeste = 1;
 $checkin  = date("Y-m-d");
@@ -14,6 +19,13 @@ if (count($_POST) > 0 && isset($_POST["suchen"])) {
     $anzahl_gaeste = filter_input(INPUT_POST, "anzahl_gaeste", FILTER_SANITIZE_NUMBER_INT);
     $checkin       = filter_input(INPUT_POST, "checkin");
     $checkout      = filter_input(INPUT_POST, "checkout");
+    $selectedAusstattungIds = existingAusstattungIds(postedAusstattungIds(), $Ausstattung_list);
+
+    foreach ($Ausstattung_list as $ausstattung) {
+        if (in_array((int) $ausstattung->id, $selectedAusstattungIds, true)) {
+            $selectedAusstattungLabels[] = $ausstattung->Bezeichnung;
+        }
+    }
 
     // SQL: Zimmertypen suchen, die zur Gästeanzahl passen und zur gesuchten Unterkunft/Stadt gehören
     $sql = "SELECT z.id as id,
@@ -43,15 +55,31 @@ if (count($_POST) > 0 && isset($_POST["suchen"])) {
                   WHERE b._Zimmertyp = z.id
                     AND b.Status != 3
                     AND NOT (b.checkout <= ? OR b.checkin >= ?)
-              )
-            ORDER BY u.Bewertung DESC";
+              )";
 
-    $suche = "%$suchbegriff%";
+    $params = [$anzahl_gaeste, "%$suchbegriff%", "%$suchbegriff%", $checkin, $checkout];
+
+    // UND-Verknüpfung: Für jede Auswahl muss eine passende Zuordnung existieren.
+    foreach ($selectedAusstattungIds as $ausstattungId) {
+        $sql .= " AND EXISTS (
+                    SELECT 1
+                    FROM Unterkunft_Ausstattung ua
+                    WHERE ua._Unterkunft_a = u.id
+                      AND ua._Ausstattung_b = ?
+                  )";
+        $params[] = $ausstattungId;
+    }
+
+    $sql .= " ORDER BY u.Bewertung DESC";
+
     $Zimmertyp = new Zimmertyp();
-    $Zimmertyp_list = $Zimmertyp->query($sql, [$anzahl_gaeste, $suche, $suche, $checkin, $checkout]);
+    $Zimmertyp_list = $Zimmertyp->query($sql, $params);
 }
 
 Core::publish($Zimmertyp_list, "Zimmertyp_list");
+Core::publish($Ausstattung_list, "Ausstattung_list");
+Core::publish($selectedAusstattungIds, "selectedAusstattungIds");
+Core::publish($selectedAusstattungLabels, "selectedAusstattungLabels");
 Core::publish($suchbegriff, "suchbegriff");
 Core::publish($anzahl_gaeste, "anzahl_gaeste");
 Core::publish($checkin, "checkin");
