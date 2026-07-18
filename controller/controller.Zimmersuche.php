@@ -126,7 +126,7 @@ if (count($_POST) > 0 && isset($_POST["suchen"])) {
         $sql .= " ORDER BY u.Bewertung DESC";
 
         $Zimmertyp = new Zimmertyp();
-        $Zimmertyp_list = $Zimmertyp->query($sql, $params);
+        $Zimmertyp_list = $Zimmertyp->query($sql, $params, true);
     }
 }
 
