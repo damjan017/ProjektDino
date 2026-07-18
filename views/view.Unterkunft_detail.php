@@ -78,10 +78,8 @@ if (!empty($Zimmertyp_b_list)) {
 <h2><?=htmlspecialchars($Unterkunft->Name)?></h2>
 
 <!-- Bildergalerie -->
-<div class="ui-body ui-body-a"
-     style="padding:10px; border-radius:6px; margin-bottom:10px;">
-
-    <h3 style="margin-top:0;">Bildergalerie</h3>
+<div class="wb-section">
+    <h3>Bildergalerie</h3>
 
     <img id="galerieHauptbild"
          src="images/<?=htmlspecialchars($galerieBilder[0]["datei"])?>"
@@ -109,7 +107,7 @@ if (!empty($Zimmertyp_b_list)) {
                         height:80px;
                         object-fit:cover;
                         border-radius:4px;
-                        border:2px solid #dddddd;
+                        border:2px solid #e0ddd4;
                         cursor:pointer;" />
 
         <?php endforeach; ?>
@@ -118,9 +116,7 @@ if (!empty($Zimmertyp_b_list)) {
 </div>
 
 <!-- Informationen zur Unterkunft -->
-<div class="ui-body ui-body-a"
-     style="padding:10px; border-radius:6px; margin-bottom:10px;">
-
+<div class="wb-section">
     <p>
         <strong>Unterkunftsart:</strong>
         <?=htmlspecialchars($Unterkunft->Unterkunftsart_literal)?>
@@ -128,10 +124,11 @@ if (!empty($Zimmertyp_b_list)) {
 
     <p>
         <strong>Sterne:</strong>
-
+        <span style="color:#C9950F;">
         <?php for ($i = 0; $i < (int)$Unterkunft->Bewertung; $i++): ?>
             &#9733;
         <?php endfor; ?>
+        </span>
     </p>
 
     <p>
@@ -173,9 +170,7 @@ if (!empty($Zimmertyp_b_list)) {
 </div>
 
 <!-- Ausstattung -->
-<div class="ui-body ui-body-a"
-     style="padding:10px; border-radius:6px; margin-bottom:10px;">
-
+<div class="wb-section">
     <h3>Ausstattung</h3>
 
     <?php if (count($groupedAusstattung) === 0): ?>
@@ -199,10 +194,11 @@ if (!empty($Zimmertyp_b_list)) {
 
                 <?php foreach ($items as $item): ?>
 
-                    <li style="background:#e8f5e9;
+                    <li style="background:#FFF8E0;
                                border-radius:20px;
                                padding:4px 12px;
-                               font-size:0.9em;">
+                               font-size:0.9em;
+                               color:#626254;">
 
                         ✓ <?=htmlspecialchars($item->Bezeichnung)?>
 
@@ -223,85 +219,64 @@ if (!empty($Zimmertyp_b_list)) {
 
 <?php if (!empty($Zimmertyp_b_list)): ?>
 
-    <?php foreach ($Zimmertyp_b_list as $zim): ?>
+    <div class="wb-result-grid">
+        <?php foreach ($Zimmertyp_b_list as $zim): ?>
 
-        <?php
-        /*
-         * Zimmerbild bestimmen.
-         */
-        $zimmerBild = "hotel_platzhalter.png";
+            <?php
+            /*
+             * Zimmerbild bestimmen.
+             */
+            $zimmerBild = "hotel_platzhalter.png";
 
-        if (!empty($zim->Bild)) {
-            $bildDatei = basename($zim->Bild);
+            if (!empty($zim->Bild)) {
+                $bildDatei = basename($zim->Bild);
 
-            if (file_exists(__DIR__ . "/../images/" . $bildDatei)) {
-                $zimmerBild = $bildDatei;
+                if (file_exists(__DIR__ . "/../images/" . $bildDatei)) {
+                    $zimmerBild = $bildDatei;
+                }
             }
-        }
-        ?>
+            ?>
 
-        <div class="ui-body ui-body-a"
-             style="padding:10px;
-                    border-radius:6px;
-                    margin-bottom:8px;">
+            <div class="wb-result-card">
+                <img src="images/<?=htmlspecialchars($zimmerBild)?>"
+                     alt="<?=htmlspecialchars($zim->Bezeichnung_literal)?>" />
 
-            <img src="images/<?=htmlspecialchars($zimmerBild)?>"
-                 alt="<?=htmlspecialchars($zim->Bezeichnung_literal)?>"
-                 style="width:100%;
-                        max-height:150px;
-                        object-fit:cover;
-                        border-radius:4px;
-                        margin-bottom:6px;" />
+                <div class="wb-result-card-body">
+                    <h4 style="margin:0 0 5px;">
+                        <?=htmlspecialchars($zim->Bezeichnung_literal)?>
+                    </h4>
 
-            <h4 style="margin:0 0 5px;">
-                <?=htmlspecialchars($zim->Bezeichnung_literal)?>
-            </h4>
+                    <p style="margin:0 0 8px; font-size:0.9em;">
+                        <?=(int)$zim->Anzahltbett?> Bett(en)
+                        &middot;
+                        <?=htmlspecialchars($zim->ArtBett)?>
+                    </p>
 
-            <p style="margin:0;">
-                <?=(int)$zim->Anzahltbett?> Bett(en)
-                &middot;
-                <?=htmlspecialchars($zim->ArtBett)?>
-            </p>
+                    <p style="margin:0 0 10px; font-size:1.1em;">
+                        <?php if ($zim->Aktionaktiv && $zim->Aktionspreis > 0 && $zim->Aktionspreis < $zim->Preis): ?>
+                            <s style="color:#999; font-size:0.8em;">
+                                <?=number_format($zim->Preis, 2, ",", ".")?> €
+                            </s>
+                            <strong style="color:#C9950F;">
+                                <?=number_format($zim->Aktionspreis, 2, ",", ".")?> €
+                            </strong> / Nacht
+                        <?php else: ?>
+                            <strong><?=number_format($zim->Preis, 2, ",", ".")?> €</strong> / Nacht
+                        <?php endif; ?>
+                    </p>
 
-            <p style="color:#626254; font-size:1.1em;">
+                    <div class="wb-result-card-actions">
+                        <a href="?task=Buchung_new&zimmertyp_id=<?=$zim->id?>"
+                           class="ui-btn ui-btn-b ui-icon-check ui-btn-icon-left"
+                           data-ajax="false">
+                            Jetzt buchen
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-                <?php if (
-                    $zim->Aktionaktiv &&
-                    $zim->Aktionspreis > 0 &&
-                    $zim->Aktionspreis < $zim->Preis
-                ): ?>
-
-                    <s style="color:#999;">
-                        <?=number_format($zim->Preis, 2, ",", ".")?> €
-                    </s>
-
-                    <strong style="color:#C9950F;">
-                        <?=number_format($zim->Aktionspreis, 2, ",", ".")?> €
-                    </strong>
-
-                    / Nacht
-
-                <?php else: ?>
-
-                    <strong>
-                        <?=number_format($zim->Preis, 2, ",", ".")?> €
-                    </strong>
-
-                    / Nacht
-
-                <?php endif; ?>
-
-            </p>
-
-            <a href="?task=Buchung_new&zimmertyp_id=<?=$zim->id?>"
-               class="ui-btn ui-btn-b ui-icon-check ui-btn-icon-left"
-               data-ajax="false">
-                Jetzt buchen
-            </a>
-
-        </div>
-
-    <?php endforeach; ?>
+        <?php endforeach; ?>
+    </div>
 
 <?php else: ?>
 

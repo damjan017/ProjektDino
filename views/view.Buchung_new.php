@@ -16,7 +16,7 @@ $zimmertyp_id  = $Buchung->_Zimmertyp  ?: $_GET["zimmertyp_id"];
 </div>
 
 <?php if ($Zimmertyp && $Unterkunft): ?>
-<div class="ui-body ui-body-a" style="margin-bottom:15px; padding:10px; border-radius:6px;">
+<div class="wb-section">
     <h3 style="margin:0 0 5px;"><?=htmlspecialchars($Unterkunft->Name)?></h3>
     <p style="margin:0;">
         <strong><?=htmlspecialchars($Zimmertyp->Bezeichnung_literal)?></strong>
@@ -35,80 +35,88 @@ $zimmertyp_id  = $Buchung->_Zimmertyp  ?: $_GET["zimmertyp_id"];
 <form id="form_Buchung" method="post" action="?task=Buchung_new" data-ajax="false">
     <input type="hidden" name="_Zimmertyp" value="<?=(int)$zimmertyp_id?>" />
 
-    <h3>Reisezeitraum</h3>
-    <div class="ui-field-contain">
-        <label for="checkin">Check-in Datum:</label>
-        <input type="date" id="checkin" name="checkin"
-               value="<?=htmlspecialchars($checkin)?>" required />
+    <div class="wb-section">
+        <h3>Reisezeitraum</h3>
+        <div class="ui-field-contain">
+            <label for="checkin">Check-in Datum:</label>
+            <input type="date" id="checkin" name="checkin"
+                   value="<?=htmlspecialchars($checkin)?>" required />
 
-        <label for="checkout">Check-out Datum:</label>
-        <input type="date" id="checkout" name="checkout"
-               value="<?=htmlspecialchars($checkout)?>" required />
+            <label for="checkout">Check-out Datum:</label>
+            <input type="date" id="checkout" name="checkout"
+                   value="<?=htmlspecialchars($checkout)?>" required />
 
-        <label for="AnzahlGaeste">Anzahl Gäste:</label>
-        <input type="number" id="AnzahlGaeste" name="AnzahlGaeste"
-               value="<?=(int)$anzahl_gaeste?>" min="1" max="20" required />
+            <label for="AnzahlGaeste">Anzahl Gäste:</label>
+            <input type="number" id="AnzahlGaeste" name="AnzahlGaeste"
+                   value="<?=(int)$anzahl_gaeste?>" min="1" max="20" required />
+        </div>
     </div>
 
-    <h3>Ihre Daten (Hauptgast)</h3>
-    <div class="ui-field-contain">
-        <label for="Vorname">Vorname:</label>
-        <input type="text" id="Vorname" name="Vorname" required />
+    <div class="wb-section">
+        <h3>Ihre Daten (Hauptgast)</h3>
+        <div class="ui-field-contain">
+            <label for="Vorname">Vorname:</label>
+            <input type="text" id="Vorname" name="Vorname" required />
 
-        <label for="Nachname">Nachname:</label>
-        <input type="text" id="Nachname" name="Nachname" required />
+            <label for="Nachname">Nachname:</label>
+            <input type="text" id="Nachname" name="Nachname" required />
 
-        <label for="Email">E-Mail:</label>
-        <input type="email" id="Email" name="Email" required />
+            <label for="Email">E-Mail:</label>
+            <input type="email" id="Email" name="Email" required />
 
-        <label for="Geburtsdatum">Geburtsdatum:</label>
-        <input type="date" id="Geburtsdatum" name="Geburtsdatum" required />
+            <label for="Geburtsdatum">Geburtsdatum:</label>
+            <input type="date" id="Geburtsdatum" name="Geburtsdatum" required />
 
-        <label for="Personalausweisnrummer">Personalausweisnummer:</label>
-        <input type="text" id="Personalausweisnrummer" name="Personalausweisnrummer"
-               placeholder="Nur für interne Zwecke – keine echten Daten!" required />
+            <label for="Personalausweisnrummer">Personalausweisnummer:</label>
+            <input type="text" id="Personalausweisnrummer" name="Personalausweisnrummer"
+                   placeholder="Nur für interne Zwecke – keine echten Daten!" required />
+        </div>
     </div>
 
-    <h3>Mitgäste</h3>
-    <div id="mitgaeste_container">
-        <p id="mitgaeste_hinweis" style="color:#888;">
-            Geben Sie oben die Anzahl der Gäste ein – danach erscheinen die Mitgast-Felder.
-        </p>
+    <div class="wb-section">
+        <h3>Mitgäste</h3>
+        <div id="mitgaeste_container">
+            <p id="mitgaeste_hinweis" style="color:#8a8a78;">
+                Geben Sie oben die Anzahl der Gäste ein – danach erscheinen die Mitgast-Felder.
+            </p>
+        </div>
     </div>
 
-    <h3>Zahlung</h3>
-    <div class="ui-field-contain">
-        <label for="Zahlungsart">Zahlungsart:</label>
-        <select id="Zahlungsart" name="Zahlungsart" required>
-            <option value="">– bitte wählen –</option>
-            <?php if (is_array($ZahlungsartT)): ?>
-                <?php foreach ($ZahlungsartT as $za): ?>
-                    <?php
-                    $lit = strtolower($za->literal);
-                    if (strpos($lit, 'kreditkarte') !== false)      $typ = 'kreditkarte';
-                    elseif (strpos($lit, 'lastschrift') !== false)   $typ = 'lastschrift';
-                    else                                              $typ = 'bar';
-                    ?>
-                    <option value="<?=$za->id?>" data-typ="<?=$typ?>"><?=htmlspecialchars($za->literal)?></option>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </select>
-    </div>
+    <div class="wb-section">
+        <h3>Zahlung</h3>
+        <div class="ui-field-contain">
+            <label for="Zahlungsart">Zahlungsart:</label>
+            <select id="Zahlungsart" name="Zahlungsart" required>
+                <option value="">– bitte wählen –</option>
+                <?php if (is_array($ZahlungsartT)): ?>
+                    <?php foreach ($ZahlungsartT as $za): ?>
+                        <?php
+                        $lit = strtolower($za->literal);
+                        if (strpos($lit, 'kreditkarte') !== false)      $typ = 'kreditkarte';
+                        elseif (strpos($lit, 'lastschrift') !== false)   $typ = 'lastschrift';
+                        else                                              $typ = 'bar';
+                        ?>
+                        <option value="<?=$za->id?>" data-typ="<?=$typ?>"><?=htmlspecialchars($za->literal)?></option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </select>
+        </div>
 
-    <div id="zahlung_kreditkarte" style="display:none;" class="ui-field-contain">
-        <label>Kartennummer:</label>
-        <input type="text" placeholder="1234 5678 9012 3456" autocomplete="off" />
-        <label>Ablaufdatum:</label>
-        <input type="month" placeholder="MM/JJ" />
-    </div>
+        <div id="zahlung_kreditkarte" style="display:none;" class="ui-field-contain">
+            <label>Kartennummer:</label>
+            <input type="text" placeholder="1234 5678 9012 3456" autocomplete="off" />
+            <label>Ablaufdatum:</label>
+            <input type="month" placeholder="MM/JJ" />
+        </div>
 
-    <div id="zahlung_lastschrift" style="display:none;" class="ui-field-contain">
-        <label>IBAN:</label>
-        <input type="text" placeholder="DE00 0000 0000 0000 0000 00" autocomplete="off" />
-    </div>
+        <div id="zahlung_lastschrift" style="display:none;" class="ui-field-contain">
+            <label>IBAN:</label>
+            <input type="text" placeholder="DE00 0000 0000 0000 0000 00" autocomplete="off" />
+        </div>
 
-    <div style="background:#FFF8E0; border:1px solid #F5BC25; padding:10px; border-radius:4px; margin:10px 0;">
-        <strong>Hinweis:</strong> Die Zahlung ist eine Simulation und wird nicht real verarbeitet.
+        <div style="background:#FFF8E0; border:1px solid #F5BC25; padding:10px; border-radius:4px; margin:10px 0;">
+            <strong>Hinweis:</strong> Die Zahlung ist eine Simulation und wird nicht real verarbeitet.
+        </div>
     </div>
 
     <button type="submit" name="buchen" value="1"

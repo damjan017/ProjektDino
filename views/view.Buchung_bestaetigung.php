@@ -13,7 +13,7 @@ $Mitgast_list = Core::import("Mitgast_list");
     <p>Vielen Dank für Ihre Buchung. Ihre Buchungsnummer: <strong>#<?=$Buchung->id?></strong></p>
 </div>
 
-<div class="ui-body ui-body-a" style="padding:15px; border-radius:6px; margin-bottom:10px;">
+<div class="wb-section">
     <h3>Unterkunft</h3>
     <?php if ($Unterkunft->Bild): ?>
     <img src="images/<?=htmlspecialchars($Unterkunft->Bild)?>"
@@ -30,7 +30,7 @@ $Mitgast_list = Core::import("Mitgast_list");
     <p><strong>Zimmertyp:</strong> <?=htmlspecialchars($Zimmertyp->Bezeichnung_literal)?></p>
 </div>
 
-<div class="ui-body ui-body-a" style="padding:15px; border-radius:6px; margin-bottom:10px;">
+<div class="wb-section">
     <h3>Buchungsdetails</h3>
     <table style="width:100%; border-collapse:collapse;">
         <tr><td style="padding:4px 0;"><strong>Check-in:</strong></td>
@@ -48,14 +48,14 @@ $Mitgast_list = Core::import("Mitgast_list");
     </table>
 </div>
 
-<div class="ui-body ui-body-a" style="padding:15px; border-radius:6px; margin-bottom:10px;">
+<div class="wb-section">
     <h3>Ihre Daten</h3>
     <p><?=htmlspecialchars($Kunde->Vorname)?> <?=htmlspecialchars($Kunde->Nachname)?></p>
     <p><?=htmlspecialchars($Kunde->Email)?></p>
 </div>
 
 <?php if (!empty($Mitgast_list)): ?>
-<div class="ui-body ui-body-a" style="padding:15px; border-radius:6px; margin-bottom:10px;">
+<div class="wb-section">
     <h3>Mitgäste</h3>
     <?php foreach ($Mitgast_list as $mg): ?>
     <p><?=htmlspecialchars($mg->Vorname)?> <?=htmlspecialchars($mg->Nachname)?></p>
