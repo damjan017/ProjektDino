@@ -1,4 +1,6 @@
 <?php
+require_once 'includes/ausstattung.functions.php';
+
 $taskType = "new";
 $classSettings = Ausstattung::$settings;
 $access = Core::checkAccessGui($classSettings, $taskType);
@@ -11,14 +13,14 @@ Ausstattung::renderScript("new", "form_Ausstattung");
 
 if (count($_POST) > 0) {
     $a = $Ausstattung->loadFormData();
-    if ($a === true) {
+    if ($a === true && validateAusstattung($Ausstattung)) {
         if ($Ausstattung->create() != "0") {
             Core::redirect("Ausstattung_detail&id=" . $Ausstattung->id, ["message" => "Ausstattung erfolgreich angelegt"]);
         } else {
             Core::addError("Der Datenbankeintrag war nicht erfolgreich");
         }
-    } else {
-        Core::addError("Die Eingegebenen Daten waren nicht korrekt");
+    } elseif ($a !== true) {
+        Core::addError("Die eingegebenen Daten waren nicht korrekt");
     }
 }
 $AusstattungskategorieT = AusstattungskategorieT::findAll();
