@@ -1,4 +1,6 @@
 <?php
+require_once 'includes/ausstattung.functions.php';
+
 $istHotelier = isset(Core::$user->Gruppe_literal)
     && strcasecmp((string) Core::$user->Gruppe_literal, "Hotelier") === 0;
 if (!$istHotelier) {
@@ -36,7 +38,12 @@ if (!$Adresse->loadDBData($Unterkunft->_Adresse)) {
     return;
 }
 
+$Ausstattung_list = Ausstattung::findAll();
+$selectedAusstattungIds = assignedAusstattungIds($id);
+
 if (count($_POST) > 0 && $_GET["task"] != "favoriten") {
+    $selectedAusstattungIds = existingAusstattungIds(postedAusstattungIds(), $Ausstattung_list);
+
     $Unterkunft->Name = trim((string) filter_input(INPUT_POST, "Name"));
     $Unterkunft->Beschreibung = trim((string) filter_input(INPUT_POST, "Beschreibung"));
     $bewertung = filter_input(INPUT_POST, "Bewertung", FILTER_SANITIZE_NUMBER_INT);
@@ -69,16 +76,18 @@ if (count($_POST) > 0 && $_GET["task"] != "favoriten") {
     }
 
     if ($eingabenKorrekt) {
-        Core::$pdo->beginTransaction();
+        try {
+            Core::$pdo->beginTransaction();
 
-        $adresseGespeichert = $Adresse->update();
-        $unterkunftGespeichert = false;
-        if ($adresseGespeichert) {
+            if (!$Adresse->update()) {
+                throw new RuntimeException('Adresse konnte nicht aktualisiert werden');
+            }
             $Unterkunft->_Adresse = $Adresse->id;
-            $unterkunftGespeichert = $Unterkunft->update();
-        }
+            if (!$Unterkunft->update()) {
+                throw new RuntimeException('Unterkunft konnte nicht aktualisiert werden');
+            }
+            saveUnterkunftAusstattung($id, $selectedAusstattungIds);
 
-        if ($adresseGespeichert && $unterkunftGespeichert) {
             Core::$pdo->commit();
 
             foreach ($_FILES as $filekey => $file) {
@@ -90,18 +99,21 @@ if (count($_POST) > 0 && $_GET["task"] != "favoriten") {
                 }
             }
 
-            Core::redirect("Unterkunft_detail&id=$id", ["message" => "Unterkunft erfolgreich aktualisiert"]);
+            Core::redirect("Unterkunft_detail&id=$id", ["message" => "Unterkunft und Ausstattung erfolgreich aktualisiert"]);
             return;
+        } catch (Throwable $error) {
+            if (Core::$pdo->inTransaction()) {
+                Core::$pdo->rollBack();
+            }
+            Core::addError("Unterkunft, Adresse oder Ausstattung konnten nicht aktualisiert werden");
+            Core::debug($error->getMessage());
         }
-
-        if (Core::$pdo->inTransaction()) {
-            Core::$pdo->rollBack();
-        }
-        Core::addError("Unterkunft und Adresse konnten nicht aktualisiert werden");
     }
 }
 
 $UnterkunftsartT = UnterkunftsartT::findAll();
 Core::publish($UnterkunftsartT, "UnterkunftsartT");
 Core::publish($Adresse, "Adresse");
+Core::publish($Ausstattung_list, "Ausstattung_list");
+Core::publish($selectedAusstattungIds, "selectedAusstattungIds");
 Core::publish($Unterkunft, "Unterkunft");

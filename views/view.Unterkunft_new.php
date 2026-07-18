@@ -2,12 +2,15 @@
 $Unterkunft = Core::$view->Unterkunft;
 $Adresse = Core::import("Adresse");
 $UnterkunftsartT = Core::import("UnterkunftsartT");
+$Ausstattung_list = Core::import("Ausstattung_list");
+$selectedAusstattungIds = Core::import("selectedAusstattungIds");
 ?>
-<a href="?task=Unterkunft" class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"
+<a href="?task=Unterkunft_detail&amp;id=<?=$Unterkunft->id?>"
+   class="ui-btn ui-icon-back ui-btn-icon-notext ui-corner-all"
    style="display:inline-block;" data-ajax="false">Zurück</a>
-<h2>Neue Unterkunft anlegen</h2>
+<h2>Unterkunft bearbeiten</h2>
 
-<form id="form_Unterkunft" method="post" action="?task=Unterkunft_new"
+<form id="form_Unterkunft" method="post" action="?task=Unterkunft_edit&amp;id=<?=$Unterkunft->id?>"
       data-ajax="false" enctype="<?=$Unterkunft::$enctype?>">
 <div class="ui-field-contain">
     <h3>Unterkunft</h3>
@@ -18,7 +21,6 @@ $UnterkunftsartT = Core::import("UnterkunftsartT");
 
     <label for="Unterkunftsart">Unterkunftsart:</label>
     <select name="Unterkunftsart" id="Unterkunftsart" required>
-        <option value="">– bitte wählen –</option>
         <?php if (is_array($UnterkunftsartT)): ?>
             <?php foreach ($UnterkunftsartT as $ua): ?>
             <option value="<?=$ua->id?>" <?=((int) $Unterkunft->Unterkunftsart === (int) $ua->id ? 'selected' : '')?>>
@@ -28,7 +30,7 @@ $UnterkunftsartT = Core::import("UnterkunftsartT");
         <?php endif; ?>
     </select>
 
-    <p>Die Unterkunft wird automatisch dem angemeldeten Hotelier zugeordnet.</p>
+    <p>Die Unterkunft bleibt dem angemeldeten Hotelier zugeordnet.</p>
 
     <h3>Adresse und Lage</h3>
     <label for="Strasse">Straße:</label>
@@ -51,6 +53,8 @@ $UnterkunftsartT = Core::import("UnterkunftsartT");
 
     <label for="DistanzzurStadt">Distanz zum Stadtzentrum in km:</label>
     <input type="number" name="DistanzzurStadt" id="DistanzzurStadt" value="<?=htmlspecialchars((string) $Adresse->DistanzzurStadt)?>" min="0" />
+
+    <?php require 'views/view.Unterkunft_Ausstattung_fields.php'; ?>
 </div>
 <button type="submit" name="update" value="1"
         class="ui-btn ui-btn-b ui-icon-check ui-btn-icon-left">Speichern</button>

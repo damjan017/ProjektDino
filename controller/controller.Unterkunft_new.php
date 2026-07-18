@@ -1,4 +1,6 @@
 <?php
+require_once 'includes/ausstattung.functions.php';
+
 $istHotelier = isset(Core::$user->Gruppe_literal)
     && strcasecmp((string) Core::$user->Gruppe_literal, "Hotelier") === 0;
 if (!$istHotelier) {
@@ -24,7 +26,12 @@ if ($hotelierId <= 0) {
     Core::addError("Dem angemeldeten Benutzer ist kein Hotelier-Profil zugeordnet");
 }
 
+$Ausstattung_list = Ausstattung::findAll();
+$selectedAusstattungIds = [];
+
 if (count($_POST) > 0) {
+    $selectedAusstattungIds = existingAusstattungIds(postedAusstattungIds(), $Ausstattung_list);
+
     // Unterkunftsdaten aus dem gemeinsamen Formular übernehmen.
     $Unterkunft->Name = trim((string) filter_input(INPUT_POST, "Name"));
     $Unterkunft->Beschreibung = trim((string) filter_input(INPUT_POST, "Beschreibung"));
@@ -62,47 +69,56 @@ if (count($_POST) > 0) {
     }
 
     if ($eingabenKorrekt) {
-        Core::$pdo->beginTransaction();
+        try {
+            Core::$pdo->beginTransaction();
 
-        $adresseId = $Adresse->create();
-        if ($adresseId != "0") {
+            $adresseId = $Adresse->create();
+            if ($adresseId == "0") {
+                throw new RuntimeException('Adresse konnte nicht gespeichert werden');
+            }
             $Unterkunft->_Adresse = $adresseId;
-            $unterkunftId = $Unterkunft->create();
-            $gespeicherteUnterkunft = [];
 
-            if ($unterkunftId != "0") {
-                $gespeicherteUnterkunft = Unterkunft::query(
-                    "SELECT id FROM Unterkunft WHERE id = ? AND _Adresse = ? AND _Hotelier = ?",
-                    [$unterkunftId, $adresseId, $hotelierId],
-                    true
-                );
+            $unterkunftId = $Unterkunft->create();
+            if ($unterkunftId == "0") {
+                throw new RuntimeException('Unterkunft konnte nicht gespeichert werden');
             }
 
-            if (count($gespeicherteUnterkunft) === 1) {
-                Core::$pdo->commit();
+            $gespeicherteUnterkunft = Unterkunft::query(
+                "SELECT id FROM Unterkunft WHERE id = ? AND _Adresse = ? AND _Hotelier = ?",
+                [$unterkunftId, $adresseId, $hotelierId],
+                true
+            );
+            if (count($gespeicherteUnterkunft) !== 1) {
+                throw new RuntimeException('Unterkunft konnte nicht verifiziert werden');
+            }
 
-                foreach ($_FILES as $filekey => $file) {
-                    if ($file["name"] != "") {
-                        $Unterkunft_field = Unterkunft::$dataScheme[$filekey];
-                        if ($Unterkunft_field["type"] == "picture") {
-                            $Unterkunft->updateFile($filekey);
-                        }
+            saveUnterkunftAusstattung($Unterkunft->id, $selectedAusstattungIds);
+            Core::$pdo->commit();
+
+            foreach ($_FILES as $filekey => $file) {
+                if ($file["name"] != "") {
+                    $Unterkunft_field = Unterkunft::$dataScheme[$filekey];
+                    if ($Unterkunft_field["type"] == "picture") {
+                        $Unterkunft->updateFile($filekey);
                     }
                 }
-
-                Core::redirect("Unterkunft_detail&id=" . $Unterkunft->id, ["message" => "Unterkunft erfolgreich angelegt"]);
-                return;
             }
-        }
 
-        if (Core::$pdo->inTransaction()) {
-            Core::$pdo->rollBack();
+            Core::redirect("Unterkunft_detail&id=" . $Unterkunft->id, ["message" => "Unterkunft erfolgreich angelegt"]);
+            return;
+        } catch (Throwable $error) {
+            if (Core::$pdo->inTransaction()) {
+                Core::$pdo->rollBack();
+            }
+            Core::addError("Unterkunft, Adresse oder Ausstattung konnten nicht gespeichert werden");
+            Core::debug($error->getMessage());
         }
-        Core::addError("Unterkunft und Adresse konnten nicht gespeichert werden");
     }
 }
 
 $UnterkunftsartT = UnterkunftsartT::findAll();
 Core::publish($UnterkunftsartT, "UnterkunftsartT");
 Core::publish($Adresse, "Adresse");
+Core::publish($Ausstattung_list, "Ausstattung_list");
+Core::publish($selectedAusstattungIds, "selectedAusstattungIds");
 Core::publish($Unterkunft, "Unterkunft");
