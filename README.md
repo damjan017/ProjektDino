@@ -1,85 +1,72 @@
 # Wingbooking
 
-Booking.com-ähnliche Webanwendung für das Modul Internet Technologies, SoSe26 (Prof. Nippa). Zwei Ansichten: Hotelier-Verwaltung und Gast-Buchung.
+Booking.com-ähnliche Webanwendung für das Modul Internet Technologies, SoSe26 (Prof. Nippa). Zwei Ansichten: Hotelier-Verwaltung und Gast-Buchung, ohne Kundenkonto.
 
 **Team:** Damjan, Tariq, Lea, Joana
 **Repository:** github.com/damjan017/ProjektDino
 **Abgabe:** 21.07.2026 · Interner Feature-Freeze: 17.07.2026
 
+Wer welchen Teil umgesetzt hat, ergibt sich aus der Commit-Historie.
+
 ## Architektur
 
 - PHP-Framework aus dem Workshop (MVC): `controller/` steuert den Ablauf, `models/` kapselt DB-Zugriff (Klassen aus UML generiert), `views/` reine Darstellung, kein Programmcode
-- Frontend: jQuery Mobile
+- Frontend: jQuery Mobile, eigenes Kartenlayout (siehe Design) oben auf dem Workshop-Theme
 - Datenbank: MySQL/MariaDB, Schema und PHP-Klassen aus dem UML-Klassendiagramm (Altova UModel) generiert
 - Generator-Regel: Code aus automatisch generierten Limited/Full-Controllern darf nicht 1:1 in eigene Controller übernommen werden — nur Workshop-Controller/Views als Vorlage
 
 ## Setup (lokal)
 
 1. XAMPP installieren, Repo nach `xampp/htdocs` (oder Symlink)
-2. Datenbank anlegen und Schema/Testdaten importieren: `mysql -u root -p < <dump-datei>.sql`
-   *(Hinweis: SQL-Dump muss noch ins Repo — siehe Offene Punkte unten)*
-3. `includes/config.php` zeigt standardmäßig auf den HS-Datenbankserver. Für lokale Tests temporär auf `localhost` umstellen — **niemals mit lokalen Zugangsdaten committen**
+2. Datenbank anlegen und Schema/Testdaten importieren: `mysql -u root -p neue_datenbank < SoseDinoPROJEKT_dump.sql`
+3. `includes/config.php` zeigt standardmäßig auf den HS-Datenbankserver (funktioniert nur im Campus-Netz). Für lokale Tests temporär auf `localhost` umstellen — **niemals mit lokalen Zugangsdaten committen**
 4. Details zum Git-Workflow: siehe [GIT-ANLEITUNG.md](GIT-ANLEITUNG.md)
 
-## Aufgabenverteilung
+## Funktionsumfang
 
-| Person | Bereich |
-|---|---|
-| Damjan | UML-Klassendiagramm, DB/PHP-Generierung, Buchungsworkflow, Verfügbarkeitsprüfung, Integration/Merges |
-| Tariq | Hotelier-Bereich (Unterkunft-CRUD inkl. Geodaten), Zimmertyp-CRUD, Suche/Filter, UML-Review |
-| Lea | Masken-Grobentwurf, Ausstattung-CRUD + Filter-Anbindung |
-| Joana | Masken-Grobentwurf, Views/Styling, Testdaten, Projektdokumentation |
+### Pflichtteil
 
----
+- **Hotelier-Verwaltung:** Unterkunft anlegen/bearbeiten/löschen (inkl. Adresse und Geodaten in einem Formular), Zimmertyp anlegen/bearbeiten/löschen — jeweils nur für die eigene Unterkunft (Eigentumsprüfung über `_Hotelier`/`roleid`). Löschschutz: eine Unterkunft/ein Zimmertyp mit vorhandenen Zimmertypen bzw. Buchungen lässt sich nicht löschen.
+- **Zimmersuche:** nach Ort/Hotelname, Zeitraum, Gästezahl, mit Eingabevalidierung (Datumsformat, Vergangenheit, Gästezahl-Bereich, Suchbegriff-Länge). Zeigt nur tatsächlich verfügbare Zimmertypen.
+- **Buchungsworkflow:** Gastdaten erfassen, Mitgäste pro zusätzlichem Bettenplatz, Zahlungsart-Auswahl mit simulierter Kreditkarten-/Lastschrift-Eingabe (rein clientseitig, wird nicht an den Server übertragen oder gespeichert), Ergebnisseite nach erfolgreicher Buchung.
+- **Verfügbarkeitsprüfung** (`models/model.Zimmertyp.php::berechneVerfuegbarkeit()`): prüft vor jeder Buchung sowie in der Suche, ob für den gewünschten Zeitraum noch ein Zimmer des gewählten Typs frei ist (Überlappungs-Query gegen bestehende Buchungen, Status "ungültig" wird ausgenommen).
+- **Preisberechnung** (`models/model.Zimmertyp.php::berechnePreis()`): Nächte × Preis, bzw. Aktionspreis, falls beim Zimmertyp aktiv.
+- **Mindestalter-Prüfung** (`models/model.Kunde.php::pruefeAlter()`): Hauptgast muss bei Buchung ≥ 18 Jahre alt sein.
 
-## Umgesetzt: Damjan
+### Fest eingeplante Erweiterungen (alle umgesetzt)
 
-**Buchungsworkflow** (`controller/controller.Buchung_new.php`, `views/view.Buchung_new.php`)
-Gastdaten erfassen, Mitgäste pro zusätzlichem Bettenplatz, Zahlungsart-Auswahl mit simulierter Kreditkarten-/Lastschrift-Eingabe (rein clientseitig, wird nicht gespeichert), Ergebnisseite nach erfolgreicher Buchung.
+- **Ausstattungsmerkmale:** eigenes CRUD mit Duplikat-Prüfung (gleiche Bezeichnung+Kategorie wird abgefangen), Zuordnung zu Unterkünften (m:n über `Unterkunft_Ausstattung`).
+- **Filterung nach Ausstattung** in der Zimmersuche: Mehrfachauswahl, UND-verknüpft (SQL `EXISTS`-Bedingungen), Suchergebnisse zeigen die gewählten Merkmale an.
+- **Zahlungsmethoden:** Bar/Kreditkarte/Lastschrift im Workflow, inkl. sich dynamisch ein-/ausblendender Formularfelder je nach Auswahl.
 
-**Verfügbarkeitsprüfung** (`models/model.Zimmertyp.php::berechneVerfuegbarkeit()`)
-Prüft vor jeder Buchung, ob für den gewünschten Zeitraum noch ein Zimmer des gewählten Typs frei ist (Überlappungs-Query gegen bestehende, nicht stornierte Buchungen). Dieselbe Logik/Konvention (Status-ID 3 = storniert) wird auch in der Zimmersuche verwendet.
+### Stretch-Goal
 
-**Preisberechnung** (`models/model.Zimmertyp.php::berechnePreis()`)
-Nächte × Preis (bzw. Aktionspreis, falls aktiv).
+- **Bildergalerie** auf der Unterkunfts-Detailseite (Hauptbild + Zimmerbilder, anklickbar).
 
-**Mindestalter-Prüfung** (`models/model.Kunde.php::pruefeAlter()`)
-Hauptgast muss bei Buchung ≥ 18 Jahre alt sein.
+### Zusätzlich umgesetzt (über den Plan hinaus)
 
-**Framework-Fixes** (`includes/system.db.php`, `includes/system.core.php`)
-`buildScheme()` und `Core::init()` waren fälschlich als Instanzmethoden deklariert, wurden aber überall statisch aufgerufen → PHP-8-Fatal-Error beim Laden jeder Seite. Fix: `static` ergänzt (Methodenkörper verwenden kein `$this`, daher unkritisch).
+- **Admin-Übersicht:** der `Administrator`-Account sieht über die App selbst alle Unterkünfte und Zimmertypen aller Hoteliers (rein lesend, mit Hotelier-Spalte) — praktisch zum Testen, ohne die Eigentumsprüfung für echte Hoteliers zu verändern.
+- **Startseite:** Hero-Bereich mit direktem Sucheinstieg, Kennzahlen (Anzahl Unterkünfte/Städte/Zimmertypen, live aus der DB), Galerie mit den beliebtesten Reisezielen (klickbar zur passenden Suche), kurzer "So funktioniert's"-Bereich.
 
-Offene Pull Requests: `fix/php8-static-methods`, `feature/buchung-verfuegbarkeit`, `docs/git-anleitung`
+## Design
 
----
+Kein 1:1-Nachbau von booking.com, aber strukturell angelehnt: Kartenraster statt Listenansicht bei Suche/Zimmerübersicht, klar getrennte Abschnitte auf Detail- und Buchungsseite. Farbschema konsequent auf Weiß/Dunkel/Gold umgestellt (Hochschul-Farben statt der ursprünglichen Blautöne des Workshop-Themes), siehe `css/themes/hs.css` (Abschnitt "Wingbooking - eigene Styles" am Dateiende).
 
-## Umgesetzt: Tariq / Lea
+## Datenbank / Testdaten
 
-*(Bitte hier kurz ergänzen, was auf `feature/lea-unterkunft-zimmertyp-crud` umgesetzt wurde — Stichpunkte reichen, z.B. welche Dateien, welche Kernentscheidungen wie die Eigentumsprüfung oder der Löschschutz.)*
+`SoseDinoPROJEKT_dump.sql` im Repo-Root enthält Schema und Testdaten (11 Unterkünfte in Baden-Württemberg — Pforzheim, Bodensee-Region, Stuttgart, Karlsruhe, Freiburg, Heidelberg, Mannheim, Tübingen, Baden-Baden, Ulm — mit passenden, lizenzfreien Fotos von Wikimedia Commons, Nachweis in `images/BILDNACHWEIS.txt`). Test-Ausweisnummern und Kundendaten sind ausschließlich Fantasiedaten (`TEST-AUSWEIS-...`), keine echten Personendaten.
 
-- Unterkunft-CRUD inkl. Adresse/Geodaten in einem Formular
-- Zimmertyp-CRUD, nur eigene Unterkünfte wählbar
-- Eigentumsprüfung + Löschschutz (kein Löschen bei vorhandenen Zimmertypen/Buchungen)
-- Suche: Eingabevalidierung (Datum, Gästezahl, Suchbegriff-Länge)
+## Bekannte Framework-Fixes
 
-## Umgesetzt: Lea (Ausstattung)
+Zwei vorbestehende Fehler im Workshop-Framework wurden gefunden und behoben:
 
-*(Bitte hier kurz ergänzen, was auf `feature/lea-ausstattung` umgesetzt wurde.)*
-
-- Ausstattungsmerkmale-CRUD mit Duplikat-Prüfung
-- Zuordnung Ausstattung ↔ Unterkunft
-- Filterung in der Zimmersuche (Mehrfachauswahl, UND-verknüpft)
-
-## Umgesetzt: Joana
-
-*(Bitte hier ergänzen: Views/Styling, Testdaten, Doku-Stand.)*
-
----
+- `DB::buildScheme()` und `Core::init()` (in `includes/system.db.php`/`system.core.php`) waren fälschlich als Instanzmethoden deklariert, wurden aber überall statisch aufgerufen → PHP-8-Fatal-Error beim Laden jeder Seite. Fix: `static` ergänzt.
+- Die Zimmersuche rief `query()` ohne `raw`-Modus auf, wodurch das Framework versuchte, automatisch zusätzliche Joins basierend auf dem UML-Modell einzufügen — das kollidierte mit der manuell geschriebenen Suchanfrage und lieferte nie Ergebnisse. Fix: `raw=true` ergänzt.
+- Für Hotelier-Logins fehlte die Verknüpfungsspalte `_User_uid` (bei `Kunde` existiert sie, bei `Hotelier` war sie im ursprünglichen UML-Modell nicht vorgesehen) — dadurch konnte sich kein Hotelier über den normalen Login mit seinem Profil verknüpfen. Spalte wurde ergänzt.
 
 ## Offene Punkte
 
-- [ ] SQL-Dump (Schema + Testdaten) fehlt noch im Repo — Pflicht laut Abgabe-Checkliste ("frisches Clone samt SQL-Import getestet")
 - [ ] Masken-Skizzen (Fotos) noch nicht im `docs/`-Ordner
-- [ ] Stretch-Goals (Belegungsansicht, Bildergalerie) noch offen — bei Zeitnot laut Plan streichbar
+- [ ] Belegungsansicht für Hotelier (zweites Stretch-Goal) noch offen — bei Zeitnot laut Plan streichbar
 - [ ] Kundenkonto mit gespeicherten Zahlungsdaten (Zusatzfeature) — bewusst auf nach dem Feature-Freeze verschoben
-- [ ] `feature/lea-ausstattung` und `feature/lea-unterkunft-zimmertyp-crud` überschneiden sich in `controller.Unterkunft_new.php`/`_edit.php`/`Zimmersuche.php` — beim Mergen händisch zusammenführen, kein automatischer Merge
+- [ ] Frisches Clone samt SQL-Import auf einem zweiten Rechner einmal komplett durchtesten (Abgabe-Checkliste)
