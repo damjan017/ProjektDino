@@ -1,0 +1,337 @@
+# Instincts generated from https://github.com/damjan017/ProjektDino
+# Generated: 2026-07-18T14:18:52.287Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: ProjektDino-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/damjan017/ProjektDino
+---
+
+# ProjektDino Commit Length
+
+## Action
+
+Write moderate-length commit messages (~95 characters)
+
+## Evidence
+
+- Average commit message length: 95 chars
+- Based on 3 commits
+
+---
+id: ProjektDino-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/damjan017/ProjektDino
+---
+
+# ProjektDino Naming Files
+
+## Action
+
+Use camelCase naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: camelCase
+
+---
+id: ProjektDino-import-relative
+trigger: "when importing modules"
+confidence: 0.75
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/damjan017/ProjektDino
+---
+
+# ProjektDino Import Relative
+
+## Action
+
+Use relative imports for project files
+
+## Evidence
+
+- Import analysis shows relative import pattern
+- Example: import { x } from '../lib/x'
+
+---
+id: ProjektDino-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/damjan017/ProjektDino
+---
+
+# ProjektDino Export Style
+
+## Action
+
+Prefer named exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: named
+
+---
+id: ProjektDino-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/damjan017/ProjektDino
+---
+
+# ProjektDino Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: projektdino-instinct-file-naming-camelcase
+trigger: "When creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: damjan017/ProjektDino
+---
+
+# Projektdino Instinct File Naming Camelcase
+
+## Action
+
+Name the file using camelCase (e.g., bookingWorkflow.ts)
+
+## Evidence
+
+- Pattern in namingConventions.files: camelCase
+
+---
+id: projektdino-instinct-function-naming-camelcase
+trigger: "When defining a new function"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: damjan017/ProjektDino
+---
+
+# Projektdino Instinct Function Naming Camelcase
+
+## Action
+
+Name the function using camelCase (e.g., checkAvailability)
+
+## Evidence
+
+- Pattern in namingConventions.functions: camelCase
+
+---
+id: projektdino-instinct-class-naming-pascalcase
+trigger: "When defining a new class"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: damjan017/ProjektDino
+---
+
+# Projektdino Instinct Class Naming Pascalcase
+
+## Action
+
+Name the class using PascalCase (e.g., BookingController)
+
+## Evidence
+
+- Pattern in namingConventions.classes: PascalCase
+
+---
+id: projektdino-instinct-constant-naming-screaming-snake-case
+trigger: "When defining a constant"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: damjan017/ProjektDino
+---
+
+# Projektdino Instinct Constant Naming Screaming Snake Case
+
+## Action
+
+Name the constant using SCREAMING_SNAKE_CASE (e.g., MAX_AGE_LIMIT)
+
+## Evidence
+
+- Pattern in namingConventions.constants: SCREAMING_SNAKE_CASE
+
+---
+id: projektdino-instinct-import-style-relative
+trigger: "When importing modules"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: damjan017/ProjektDino
+---
+
+# Projektdino Instinct Import Style Relative
+
+## Action
+
+Use relative import paths (e.g., import { foo } from '../utils/foo')
+
+## Evidence
+
+- Pattern in importStyle: relative
+
+---
+id: projektdino-instinct-export-style-named
+trigger: "When exporting modules or functions"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: damjan017/ProjektDino
+---
+
+# Projektdino Instinct Export Style Named
+
+## Action
+
+Use named exports (e.g., export function foo() {})
+
+## Evidence
+
+- Pattern in exportStyle: named
+
+---
+id: projektdino-instinct-test-location-separate
+trigger: "When adding new tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: damjan017/ProjektDino
+---
+
+# Projektdino Instinct Test Location Separate
+
+## Action
+
+Place test files in a separate directory from source files
+
+## Evidence
+
+- Pattern in architecture.testLocation: separate
+
+---
+id: projektdino-instinct-git-commit-prefix-feature-bugfix
+trigger: "When writing a commit message"
+confidence: 0.9
+domain: git
+source: repo-analysis
+source_repo: damjan017/ProjektDino
+---
+
+# Projektdino Instinct Git Commit Prefix Feature Bugfix
+
+## Action
+
+Prefix the message with the relevant workflow or fix (e.g., 'Buchungsworkflow:' or 'Fix:')
+
+## Evidence
+
+- Seen in commit: 'Buchungsworkflow: Verfuegbarkeitspruefung, Preisberechnung ueber Zimmertyp-Methoden, Mindestalter-Check'
+- Seen in commit: 'Fix: buildScheme()/Core::init() faelschlich als Instanzmethoden deklariert (PHP 8 Fatal Error)'
+
+---
+id: projektdino-instinct-git-commit-format-capitalized
+trigger: "When writing a commit message"
+confidence: 0.8
+domain: git
+source: repo-analysis
+source_repo: damjan017/ProjektDino
+---
+
+# Projektdino Instinct Git Commit Format Capitalized
+
+## Action
+
+Start the message with a capital letter after the prefix
+
+## Evidence
+
+- Seen in commit: 'Fix: buildScheme()/Core::init() faelschlich als Instanzmethoden deklariert (PHP 8 Fatal Error)'
+
+---
+id: projektdino-instinct-git-commit-length-descriptive
+trigger: "When writing a commit message"
+confidence: 0.7
+domain: git
+source: repo-analysis
+source_repo: damjan017/ProjektDino
+---
+
+# Projektdino Instinct Git Commit Length Descriptive
+
+## Action
+
+Write a descriptive commit message, typically around 95 characters
+
+## Evidence
+
+- Pattern in commits.averageLength: 95
+- Examples of descriptive commit messages
+
+---
+id: projektdino-instinct-workflow-prefix-buchungsworkflow
+trigger: "When committing changes related to the booking workflow"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: damjan017/ProjektDino
+---
+
+# Projektdino Instinct Workflow Prefix Buchungsworkflow
+
+## Action
+
+Prefix the commit message with 'Buchungsworkflow:'
+
+## Evidence
+
+- Seen in commit: 'Buchungsworkflow: Verfuegbarkeitspruefung, Preisberechnung ueber Zimmertyp-Methoden, Mindestalter-Check'
+- Seen in commit: 'Buchungsworkflow: Zahlungsart-Felder (Kreditkarte/Lastschrift) simuliert ein-/ausblenden'
+
+---
+id: projektdino-instinct-workflow-prefix-fix
+trigger: "When committing bug fixes"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: damjan017/ProjektDino
+---
+
+# Projektdino Instinct Workflow Prefix Fix
+
+## Action
+
+Prefix the commit message with 'Fix:'
+
+## Evidence
+
+- Seen in commit: 'Fix: buildScheme()/Core::init() faelschlich als Instanzmethoden deklariert (PHP 8 Fatal Error)'
+
