@@ -9,7 +9,24 @@ Core::setViewScheme("view1", "list", "Buchung");
 $Buchung_list = [];
 $Buchung = new Buchung();
 Buchung::$activeViewport = "list";
-if (count($_POST) > 0 && $_GET["task"] != "favoriten") {
+
+// Ein Hotelier sieht die Buchungen seiner eigenen Unterkuenfte.
+// (Ohne raw=true wuerde das Framework auf owner_id filtern - Gastbuchungen haben keinen Besitzer.)
+$istHotelier = isset(Core::$user->Gruppe_literal)
+    && strcasecmp((string) Core::$user->Gruppe_literal, "Hotelier") === 0;
+
+if ($istHotelier) {
+    $hotelierId = (int) Core::$user->roleid;
+    // Nur die Besitzer-Einschraenkung abschalten - die uebrige Aufbereitung
+    // (Anzeigetexte der Wertelisten, Formatierung) bleibt erhalten.
+    Buchung::$SQLrestrict = false;
+    $alleBuchungen = Buchung::findAll();
+    Buchung::$SQLrestrict = true;
+
+    $Buchung_list = array_values(array_filter($alleBuchungen, function ($b) use ($hotelierId) {
+        return (int) $b->_Hotelier === $hotelierId;
+    }));
+} elseif (count($_POST) > 0 && $_GET["task"] != "favoriten") {
     $Buchung_list = $Buchung->search(filter_input(INPUT_POST, "search"));
 } else {
     $Buchung_list = Buchung::findAll();

@@ -51,7 +51,11 @@ if ($istHotelier && ($hotelierId <= 0 || (int) $Unterkunft->_Hotelier !== $hotel
 
 // Buchungen werden erst nach der Eigentumsprüfung geladen.
 $Buchung_b = new Buchung();
+// Die Eigentumspruefung ist oben bereits erfolgt. Ohne Abschalten der Besitzer-
+// Einschraenkung wuerde das Framework Gastbuchungen (ohne owner_id) ausblenden.
+Buchung::$SQLrestrict = false;
 $Buchung_b_list = $Buchung_b->query(Buchung::SQL_SELECT_Zimmertyp, [$Zimmertyp->id]);
+Buchung::$SQLrestrict = true;
 
 Core::publish($Zimmertyp, "Zimmertyp");
 Core::publish($Unterkunft, "Unterkunft");

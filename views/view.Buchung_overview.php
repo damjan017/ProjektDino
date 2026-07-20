@@ -29,9 +29,9 @@ $access       = Core::import("access");
     <?php $klasse->render("checkin"); ?>
     <?php $klasse->render("checkout"); ?>
     <?php $klasse->render("AnzahlGaeste"); ?>
-    <?php $klasse->render("Gesamtpreis"); ?>
-    <?php $klasse->render("Zahlungsart"); ?>
-    <?php $klasse->render("Status"); ?>
+    <td><?= $klasse->Gesamtpreis !== null ? number_format((float) $klasse->Gesamtpreis, 2, ',', '.') . ' €' : '' ?></td>
+    <td><?= htmlspecialchars((string) ($klasse->Zahlungsart_literal ?? '')) ?></td>
+    <td><?= htmlspecialchars((string) ($klasse->Status_literal ?? '')) ?></td>
     <td>
         <?php if ($access["detail"] == "true"): ?>
         <a href="?task=Buchung_detail&id=<?=$klasse->id?>" data-ajax="false"

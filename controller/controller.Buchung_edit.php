@@ -9,7 +9,18 @@ Core::setViewScheme("view1", "edit", "Buchung");
 $Buchung = new Buchung();
 Buchung::$activeViewport = "edit";
 Buchung::renderScript("edit", "form_Buchung");
+
+// Gastbuchungen haben keinen Besitzer (owner_id), deshalb nur die Besitzer-
+// Einschraenkung abschalten. Der Hotelier darf nur eigene Buchungen bearbeiten.
+$istHotelier = isset(Core::$user->Gruppe_literal)
+    && strcasecmp((string) Core::$user->Gruppe_literal, "Hotelier") === 0;
+Buchung::$SQLrestrict = false;
 $Buchung->loadDBData($id);
+Buchung::$SQLrestrict = true;
+if ($istHotelier && (int) $Buchung->_Hotelier !== (int) Core::$user->roleid) {
+    Core::redirect("Buchung", ["errorMsg" => "Diese Buchung gehört nicht zu Ihren Unterkünften"]);
+    return;
+}
 
 if (count($_POST) > 0 && $_GET["task"] != "favoriten") {
     $a = $Buchung->loadFormData();
