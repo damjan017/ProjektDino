@@ -46,7 +46,7 @@ Wer welchen Teil umgesetzt hat, ergibt sich aus der Commit-Historie.
 ### Zusätzlich umgesetzt (über den Plan hinaus)
 
 - **Admin-Übersicht:** der `Administrator`-Account sieht über die App selbst alle Unterkünfte und Zimmertypen aller Hoteliers (rein lesend, mit Hotelier-Spalte) — praktisch zum Testen, ohne die Eigentumsprüfung für echte Hoteliers zu verändern.
-- **Startseite:** Hero-Bereich mit direktem Sucheinstieg, Kennzahlen (Anzahl Unterkünfte/Städte/Zimmertypen, live aus der DB), Galerie mit den beliebtesten Reisezielen (klickbar zur passenden Suche), kurzer "So funktioniert's"-Bereich.
+- **Startseite:** Hero-Bereich mit direktem Sucheinstieg, Kennzahlen (Anzahl Unterkünfte/Städte/Zimmertypen, live aus der DB), Galerie mit den beliebtesten Reisezielen (klickbar zur passenden Suche).
 
 ## Design
 

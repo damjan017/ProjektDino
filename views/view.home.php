@@ -1,5 +1,4 @@
 <?php
-$istHotelier = Core::import("istHotelier");
 $reiseziele  = Core::import("reiseziele");
 $kennzahlen  = Core::import("kennzahlen");
 ?>
@@ -12,14 +11,6 @@ $kennzahlen  = Core::import("kennzahlen");
         <a href="?task=Zimmersuche" class="ui-btn ui-btn-b ui-icon-search ui-btn-icon-left wb-hero-btn" data-ajax="false">
             Jetzt Zimmer suchen
         </a>
-    </div>
-
-    <div class="wb-hero-links">
-        <?php if ($istHotelier): ?>
-            <a href="?task=Unterkunft" data-ajax="false">Meine Unterkünfte verwalten</a>
-        <?php else: ?>
-            <a href="?task=login" data-ajax="false">Als Hotelier anmelden</a>
-        <?php endif; ?>
     </div>
 
     <?php if ($kennzahlen): ?>
@@ -52,23 +43,5 @@ $kennzahlen  = Core::import("kennzahlen");
     </div>
     <?php endif; ?>
 
-    <h3 class="wb-section-title">So funktioniert's</h3>
-    <div class="wb-steps-grid">
-        <div class="wb-step">
-            <div class="wb-step-number">1</div>
-            <h4>Suchen</h4>
-            <p>Ort, Zeitraum und Gästezahl eingeben – ganz ohne Konto.</p>
-        </div>
-        <div class="wb-step">
-            <div class="wb-step-number">2</div>
-            <h4>Vergleichen</h4>
-            <p>Preise, Ausstattung und Bewertungen auf einen Blick vergleichen.</p>
-        </div>
-        <div class="wb-step">
-            <div class="wb-step-number">3</div>
-            <h4>Buchen</h4>
-            <p>Daten eingeben, Zahlungsart wählen, sofort bestätigt bekommen.</p>
-        </div>
-    </div>
 
 </div>
