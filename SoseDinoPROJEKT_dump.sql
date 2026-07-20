@@ -371,7 +371,7 @@ CREATE TABLE `ZahlungsartT` (
 
 -- Daten fuer Tabelle ZahlungsartT (4 Zeilen)
 INSERT INTO `ZahlungsartT` (`id`, `c_ts`, `m_ts`, `literal`, `sort`) VALUES (1, '2026-05-19 13:15:31', '2026-05-19 13:15:31', 'Kreditkarte', NULL);
-INSERT INTO `ZahlungsartT` (`id`, `c_ts`, `m_ts`, `literal`, `sort`) VALUES (2, '2026-05-19 13:15:31', '2026-05-19 13:15:31', 'PayPal', NULL);
+INSERT INTO `ZahlungsartT` (`id`, `c_ts`, `m_ts`, `literal`, `sort`) VALUES (2, '2026-05-19 13:15:31', '2026-05-19 13:15:31', 'Lastschrift', NULL);
 INSERT INTO `ZahlungsartT` (`id`, `c_ts`, `m_ts`, `literal`, `sort`) VALUES (3, '2026-05-19 13:15:31', '2026-05-19 13:15:31', 'Rechnung', NULL);
 INSERT INTO `ZahlungsartT` (`id`, `c_ts`, `m_ts`, `literal`, `sort`) VALUES (4, '2026-05-19 13:15:31', '2026-05-19 13:15:31', 'Bar', NULL);
 
