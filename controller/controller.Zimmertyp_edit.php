@@ -32,7 +32,13 @@ if ($hotelierId > 0) {
     return;
 }
 
-if (!$Zimmertyp->loadDBData($id)) {
+// Besitzer-Einschraenkung des Frameworks abschalten (owner_id ist bei den
+// importierten Datensaetzen leer). Die Eigentumspruefung folgt direkt darunter.
+Zimmertyp::$SQLrestrict = false;
+$geladen = $Zimmertyp->loadDBData($id);
+Zimmertyp::$SQLrestrict = true;
+
+if (!$geladen) {
     Core::redirect("Zimmertyp", ["errorMsg" => "Zimmertyp wurde nicht gefunden"]);
     return;
 }

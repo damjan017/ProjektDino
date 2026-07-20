@@ -34,7 +34,14 @@ $hotelierId = (int) Core::$user->roleid;
 $Zimmertyp = new Zimmertyp();
 Zimmertyp::$activeViewport = "detail";
 
+// Besitzer-Einschraenkung abschalten (owner_id ist bei importierten Datensaetzen
+// leer); die Eigentumspruefung erfolgt weiter unten fachlich.
+Zimmertyp::$SQLrestrict = false;
+Unterkunft::$SQLrestrict = false;
+
 if (!$id || !$Zimmertyp->loadDBData($id)) {
+    Zimmertyp::$SQLrestrict = true;
+    Unterkunft::$SQLrestrict = true;
     Core::redirect("Zimmertyp", ["errorMsg" => "Zimmertyp wurde nicht gefunden"]);
     return;
 }
@@ -44,6 +51,9 @@ if (!$Unterkunft->loadDBData($Zimmertyp->_Unterkunft)) {
     Core::redirect("Zimmertyp", ["errorMsg" => "Die zugehörige Unterkunft wurde nicht gefunden"]);
     return;
 }
+Zimmertyp::$SQLrestrict = true;
+Unterkunft::$SQLrestrict = true;
+
 if ($istHotelier && ($hotelierId <= 0 || (int) $Unterkunft->_Hotelier !== $hotelierId)) {
     Core::redirect("Zimmertyp", ["errorMsg" => "Dieser Zimmertyp gehört nicht zu Ihrem Konto"]);
     return;

@@ -23,7 +23,13 @@ $hotelierId = (int) Core::$user->roleid;
 Unterkunft::$activeViewport = "edit";
 Unterkunft::renderScript("edit", "form_Unterkunft");
 
-if (!$Unterkunft->loadDBData($id)) {
+// Besitzer-Einschraenkung des Frameworks abschalten (owner_id ist bei den
+// importierten Datensaetzen leer). Die fachliche Eigentumspruefung folgt direkt.
+Unterkunft::$SQLrestrict = false;
+$geladen = $Unterkunft->loadDBData($id);
+Unterkunft::$SQLrestrict = true;
+
+if (!$geladen) {
     Core::redirect("Unterkunft", ["errorMsg" => "Unterkunft wurde nicht gefunden"]);
     return;
 }
