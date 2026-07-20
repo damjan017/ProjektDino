@@ -1,8 +1,6 @@
 <?php
 // Buchungsworkflow: Schritt 1 - Kundendaten + Buchungsdetails erfassen
-$taskType = "new";
-$classSettings = Buchung::$settings;
-$access = Core::checkAccessGui($classSettings, $taskType);
+// Kein Berechtigungscheck: Gäste buchen laut Aufgabenstellung ohne Kundenkonto/Login.
 Core::$title = "Zimmer buchen";
 Core::setView("Buchung_new", "view1", "new");
 Core::setViewScheme("view1", "new", "Buchung");
@@ -15,10 +13,10 @@ Buchung::renderScript("new", "form_Buchung");
 if (isset($_GET["zimmertyp_id"])) {
     $Buchung->_Zimmertyp = $_GET["zimmertyp_id"];
     $Zimmertyp = new Zimmertyp();
-    $Zimmertyp->loadDBData($_GET["zimmertyp_id"]);
+    $Zimmertyp->loadDBData($_GET["zimmertyp_id"], [], true);
     Core::publish($Zimmertyp, "Zimmertyp");
     $Unterkunft = new Unterkunft();
-    $Unterkunft->loadDBData($Zimmertyp->_Unterkunft);
+    $Unterkunft->loadDBData($Zimmertyp->_Unterkunft, [], true);
     Core::publish($Unterkunft, "Unterkunft");
 }
 
@@ -39,7 +37,7 @@ if (count($_POST) > 0 && isset($_POST["buchen"])) {
     $zimmertypId = filter_input(INPUT_POST, "_Zimmertyp", FILTER_SANITIZE_NUMBER_INT);
 
     $ZT = new Zimmertyp();
-    $ZT->loadDBData($zimmertypId);
+    $ZT->loadDBData($zimmertypId, [], true);
 
     if (!$ZT->berechneVerfuegbarkeit(true, $checkin, $checkout)) {
         Core::addError("Dieser Zimmertyp ist im gewählten Zeitraum leider nicht mehr verfügbar");
@@ -70,7 +68,7 @@ if (count($_POST) > 0 && isset($_POST["buchen"])) {
 
             // Hotelier der Unterkunft ermitteln
             $UK = new Unterkunft();
-            $UK->loadDBData($ZT->_Unterkunft);
+            $UK->loadDBData($ZT->_Unterkunft, [], true);
             $Buchung->_Hotelier = $UK->_Hotelier;
 
             if ($Buchung->create() != "0") {

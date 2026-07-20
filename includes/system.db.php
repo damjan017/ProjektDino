@@ -166,11 +166,13 @@ class DB {
      * @return boolean Gibt true oder false zur�ck.
      * @example <code>$result=$myObject->loadDBData(27);</code><br>L�dt in aktuelles Objekt Datensatz mit PK=27<br><code>$result=$myObject->loadDBData("SELECT * FROM User WHERE Kennung=?",["Nippa"]);</code><br>L�dt in aktuelles Objekt Ergebnis aus SQL. Beachten Sie, dass die Anweisung (ggf. mit LIMIT) auch nur einen Datensatz als Ergebnis liefert
      */
-    public function loadDBData($id, $param = array()) {
+    public function loadDBData($id, $param = array(), $raw = false) {
+        // $raw=true umgeht wie bei find() die automatischen Rechte-/Join-Erweiterungen
+        // (noetig fuer oeffentliche Gast-Seiten, da sonst fuer G0 'WHERE 1=0' angehaengt wird)
         if (count($param) != 0) {
-            $obj = self::find($id, $param); // SQL-Anweisung+Parameter
+            $obj = self::find($id, $param, $raw); // SQL-Anweisung+Parameter
         } else {
-            $obj = self::find($id);
+            $obj = self::find($id, array(), $raw);
         }
 
 
